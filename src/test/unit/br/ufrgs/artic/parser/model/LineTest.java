@@ -9,14 +9,17 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
-public class ModelTest {
+public class LineTest {
 
     @Test
-    public void itShouldCreateLineWhenRequiredAttributesAreProvided() {
+    public void itShouldCreateLineWhenRequiredParamsProvided() {
 
-        Line validLine = new Line.Builder(0, new Page(0.00, 0, 0)).addWord(new Word()).build();
+
+        Word testingWord = new Word.Builder(0, "Testing").build();
+
+        Line validLine = new Line.Builder(0, new Page(0.00, 0, 0))
+                .addWord(testingWord).build();
 
         assertNotNull(validLine);
         //line tests for required params
@@ -38,13 +41,13 @@ public class ModelTest {
     }
 
     @Test
-    public void itShouldCreateLineWhenOptionalAttributesAreProvided() {
+    public void itShouldCreateLineWhenOptionalParamsProvided() {
 
         ArrayList<Word> words = new ArrayList<Word>();
-        words.add(new Word());
-        words.add(new Word());
+        words.add(new Word.Builder(0, "Testing").build());
+        words.add(new Word.Builder(1, "Testing").build());
 
-        Line previousLine = new Line.Builder(0, new Page(0.00, 0, 0)).addWord(new Word()).build();
+        Line previousLine = new Line.Builder(0, new Page(0.00, 0, 0)).addWord(new Word.Builder(0, "Testing").build()).build();
 
         Line validLine = new Line.Builder(0, new Page(18.00, 1, 1)).addAllWords(words).alignment(Alignment.CENTER)
                 .fontFace("Times New Roman").fontSize(20.00).bold(true)
@@ -70,7 +73,7 @@ public class ModelTest {
     }
 
     @Test
-      public void itShouldFailToCreateLineWhenNoPageIsProvided() {
+    public void itShouldFailToCreateLineWhenNoPageProvided() {
 
         try {
             new Line.Builder(0, null);
@@ -82,7 +85,7 @@ public class ModelTest {
     }
 
     @Test
-    public void itShouldFailToCreateLineWhenNoWordIsProvided() {
+    public void itShouldFailToCreateLineWhenNoWordProvided() {
 
         try {
             new Line.Builder(0, new Page(0.00, 0, 0)).build();
