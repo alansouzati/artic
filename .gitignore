@@ -1,0 +1,10 @@
+/target
+target
+tmp
+.history
+dist
+/.idea
+/*.iml
+/.idea_modules
+/.classpath
+/.project
