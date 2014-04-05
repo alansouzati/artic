@@ -13,7 +13,8 @@ public class Line extends Element {
 
     private final Page page;
     private final Line previousLine;
-    private final List<Word> words = new ArrayList<Word>();
+    private final Paragraph paragraph;
+    private final List<Word> words = new ArrayList<>();
 
     public Line(Builder builder) {
 
@@ -21,9 +22,13 @@ public class Line extends Element {
 
         page = builder.page;
         previousLine = builder.previousLine;
+        paragraph = builder.paragraph;
+        content = builder.content;
         words.addAll(builder.words);
 
-        content = buildContent(words);
+        if (content == null || content.isEmpty()) {
+            content = buildContent(words);
+        }
     }
 
     private String buildContent(List<Word> words) {
@@ -55,14 +60,20 @@ public class Line extends Element {
         return previousLine;
     }
 
+    public Paragraph getParagraph() {
+        return paragraph;
+    }
+
     public static class Builder extends ElementBuilder {
 
         //required params
         private final Page page;
 
         //optional params
-        private List<Word> words = new ArrayList<Word>();
+        private List<Word> words = new ArrayList<>();
         private Line previousLine = null;
+        private Paragraph paragraph = Paragraph.SAME;
+        private String content = "";
 
         public Builder(int index, Page page) {
 
@@ -90,6 +101,16 @@ public class Line extends Element {
             return this;
         }
 
+        public Builder top(int top) {
+            this.top = top;
+            return this;
+        }
+
+        public Builder left(int left) {
+            this.left = left;
+            return this;
+        }
+
         public Builder alignment(Alignment alignment) {
             this.alignment = alignment;
             return this;
@@ -100,8 +121,8 @@ public class Line extends Element {
             return this;
         }
 
-        public Builder fontSize(double fontSize) {
-            if (fontSize > 0) {
+        public Builder fontSize(FontSize fontSize) {
+            if (fontSize != null) {
                 this.fontSize = fontSize;
             }
             return this;
@@ -109,6 +130,16 @@ public class Line extends Element {
 
         public Builder previousLine(Line previousLine) {
             this.previousLine = previousLine;
+            return this;
+        }
+
+        public Builder paragraph(Paragraph paragraph) {
+            this.paragraph = paragraph;
+            return this;
+        }
+
+        public Builder content(String content) {
+            this.content = content;
             return this;
         }
 
@@ -129,10 +160,6 @@ public class Line extends Element {
         }
 
         public Line build() {
-            if (words.isEmpty()) {
-                throw new IllegalArgumentException("Please provide enough words.");
-            }
-
             return new Line(this);
         }
     }

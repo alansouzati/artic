@@ -5,5 +5,16 @@ package br.ufrgs.artic.parser.model;
  */
 public enum Alignment {
 
-    LEFT, CENTER
+    LEFT, CENTERED, JUSTIFIED, RIGHT;
+
+    public static Alignment get(String alignment) {
+
+        for (Alignment currentAlignment : Alignment.values()) {
+            if (currentAlignment.toString().equalsIgnoreCase(alignment.trim())) {
+                return currentAlignment;
+            }
+        }
+
+        return Alignment.LEFT;
+    }
 }

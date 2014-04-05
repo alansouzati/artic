@@ -9,10 +9,12 @@ public abstract class Element {
     protected String content;
     protected final Alignment alignment;
     protected final String fontFace;
-    protected final double fontSize;
+    protected final FontSize fontSize;
     protected final boolean bold;
     protected final boolean italic;
     protected final boolean underline;
+    protected final int left;
+    protected final int top;
 
     protected Element(ElementBuilder builder) {
         index = builder.index;
@@ -23,6 +25,8 @@ public abstract class Element {
         bold = builder.bold;
         italic = builder.italic;
         underline = builder.underline;
+        left = builder.left;
+        top = builder.top;
     }
 
     public Alignment getAlignment() {
@@ -33,7 +37,7 @@ public abstract class Element {
         return fontFace;
     }
 
-    public double getFontSize() {
+    public FontSize getFontSize() {
         return fontSize;
     }
 
@@ -57,6 +61,14 @@ public abstract class Element {
         return index;
     }
 
+    public int getLeft() {
+        return left;
+    }
+
+    public int getTop() {
+        return top;
+    }
+
     public static class ElementBuilder {
         //required params
         protected final int index;
@@ -67,7 +79,10 @@ public abstract class Element {
         protected boolean underline = false;
         protected Alignment alignment = Alignment.LEFT;
         protected String fontFace = "Arial";
-        protected double fontSize = 12.00;
+        protected FontSize fontSize = FontSize.NORMAL;
+        protected int left = 0;
+        protected int top = 0;
+
 
         public ElementBuilder(int index) {
             this.index = index;

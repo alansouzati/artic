@@ -63,8 +63,8 @@ public class Word extends Element {
             return this;
         }
 
-        public Builder fontSize(double fontSize) {
-            if (fontSize > 0) {
+        public Builder fontSize(FontSize fontSize) {
+            if (fontSize != null) {
                 this.fontSize = fontSize;
             }
             return this;
