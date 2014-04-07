@@ -7,16 +7,22 @@ package br.ufrgs.artic.parser.model;
 public class Word extends Element {
 
     private final Word previousWord;
+    private final Line line;
 
     public Word(Builder builder) {
         super(builder);
 
         previousWord = builder.previousWord;
         content = builder.content;
+        line = builder.line;
     }
 
     public Word getPreviousWord() {
         return previousWord;
+    }
+
+    public Line getLine() {
+        return line;
     }
 
     public static class Builder extends ElementBuilder {
@@ -26,6 +32,7 @@ public class Word extends Element {
 
         //optional params
         private Word previousWord = null;
+        private Line line = null;
 
         public Builder(int index, String content) {
 
@@ -59,7 +66,10 @@ public class Word extends Element {
         }
 
         public Builder fontFace(String fontFace) {
-            this.fontFace = fontFace;
+            if (fontFace != null) {
+                this.fontFace = fontFace;
+            }
+
             return this;
         }
 
@@ -72,6 +82,21 @@ public class Word extends Element {
 
         public Builder previousWord(Word previousWord) {
             this.previousWord = previousWord;
+            return this;
+        }
+
+        public Builder line(Line line) {
+            this.line = line;
+            return this;
+        }
+
+        public Builder top(int top) {
+            this.top = top;
+            return this;
+        }
+
+        public Builder left(int left) {
+            this.left = left;
             return this;
         }
 

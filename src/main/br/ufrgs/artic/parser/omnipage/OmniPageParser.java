@@ -74,6 +74,7 @@ public class OmniPageParser implements PageParser {
         Integer lineCounter = 0;
         Boolean foundIntroOrAbstract = false;
         Line previousLine = null;
+        Word previousWord = null;
         if (paragraphs != null && !paragraphs.isEmpty()) {
 
             for (Element paragraphElement : paragraphs) {
@@ -85,47 +86,31 @@ public class OmniPageParser implements PageParser {
                 if (linesOfParagraph != null && !linesOfParagraph.isEmpty()) {
                     for (Element lineElement : linesOfParagraph) {
 
-                        String textContent = getOriginalText(lineElement);
+                        String lineContent = getOriginalText(lineElement);
 
-                        int topNormalized = 0;
-                        int leftNormalized = 0;
-                        if (lineElement.getAttribute("t") != null && !lineElement.getAttribute("t").isEmpty() &&
-                                lineElement.getAttribute("l") != null && !lineElement.getAttribute("l").isEmpty()) {
-
-                            int top = Integer.parseInt(lineElement.getAttribute("t").replaceAll(",", "\\."));
-                            topNormalized = top / page.getTop();
-
-                            int left = Integer.parseInt(lineElement.getAttribute("l").replaceAll(",", "\\."));
-                            leftNormalized = left / page.getLeft();
-
-                        }
-
-                        Line.Builder lineBuilder = new Line.Builder(lineCounter, page)
-                                .alignment(Alignment.get(paragraphElement.getAttribute("alignment")))
-                                .previousLine(previousLine)
-                                .content(textContent)
-                                .bold(getBooleanValue(lineElement.getAttribute("bold")))
-                                .italic(getBooleanValue(lineElement.getAttribute("italic")))
-                                .underline(getBooleanValue(lineElement.getAttribute("underline"), "none"))
-                                .fontSize(getFontSize(lineElement, page.getAverageFontSize()))
-                                .fontFace(lineElement.getAttribute("fontFace"))
-                                .left(leftNormalized)
-                                .top(topNormalized);
-
-                        if (textContent != null && Pattern.compile("intro|abstract", Pattern.CASE_INSENSITIVE).
-                                matcher(textContent).find()) {
+                        if (lineContent != null && Pattern.compile("intro|abstract", Pattern.CASE_INSENSITIVE).
+                                matcher(lineContent).find()) {
                             foundIntroOrAbstract = true;
                         }
 
-                        if (!foundIntroOrAbstract) {  //special case for headers
-                            lineBuilder.paragraph(Paragraph.HEADER);
-                        } else {
-                            lineBuilder.paragraph(paragraph);
-                        }
+                        Line line = getLine(page, lineCounter, foundIntroOrAbstract, previousLine,
+                                paragraphElement, paragraph, lineElement, lineContent);
 
-                        //create the line instance here
-                        Line line = lineBuilder.build();
                         lines.add(line);
+
+                        List<Element> words = getElementsByTagName("wd", lineElement);
+                        int currentWordIndex = 0;
+
+                        for (Element wordElement : words) {
+
+                            Word word = getWord(page, previousWord, paragraphElement,
+                                    line, currentWordIndex, wordElement);
+
+                            line.getWords().add(word);
+                            previousWord = word;
+
+                            currentWordIndex++;
+                        }
 
                         paragraph = Paragraph.SAME;
                         previousLine = line;
@@ -136,6 +121,92 @@ public class OmniPageParser implements PageParser {
         }
 
         return lines;
+    }
+
+    private Word getWord(Page page, Word previousWord, Element paragraphElement, Line line, int currentWordIndex, Element wordElement) {
+        int topNormalized = 0;
+        int leftNormalized = 0;
+        if (wordElement.getAttribute("t") != null && !wordElement.getAttribute("t").isEmpty() &&
+                wordElement.getAttribute("l") != null && !wordElement.getAttribute("l").isEmpty()) {
+
+            int top = Integer.parseInt(wordElement.getAttribute("t").replaceAll(",", "\\."));
+            topNormalized = top / page.getTop();
+
+            int left = Integer.parseInt(wordElement.getAttribute("l").replaceAll(",", "\\."));
+            leftNormalized = left / page.getLeft();
+
+        }
+
+        String wordContent = getOriginalText(wordElement);
+
+        String fontFace = wordElement.getAttribute("fontFace");
+        fontFace = (fontFace != null && !fontFace.isEmpty()) ? fontFace : line.getFontFace();
+
+        FontSize fontSize = (wordElement.getAttribute("fontSize") != null &&
+                !wordElement.getAttribute("fontSize").isEmpty()) ?
+                getFontSize(wordElement, page.getAverageFontSize()) : line.getFontSize();
+
+        boolean bold = (wordElement.getAttribute("bold") != null &&
+                !wordElement.getAttribute("bold").isEmpty()) ?
+                getBooleanValue(wordElement.getAttribute("bold")) : line.getBold();
+
+        boolean italic = (wordElement.getAttribute("italic") != null &&
+                !wordElement.getAttribute("italic").isEmpty()) ?
+                getBooleanValue(wordElement.getAttribute("italic")) : line.getItalic();
+
+        boolean underline = (wordElement.getAttribute("underline") != null &&
+                !wordElement.getAttribute("underline").isEmpty()) ?
+                getBooleanValue(wordElement.getAttribute("underline"), "none") : line.getUnderline();
+
+        return new Word.Builder(currentWordIndex, wordContent)
+                .previousWord(previousWord).line(line)
+                .alignment(Alignment.get(paragraphElement.getAttribute("alignment")))
+                .bold(bold)
+                .italic(italic)
+                .underline(underline)
+                .fontSize(fontSize)
+                .fontFace(fontFace)
+                .left(leftNormalized)
+                .top(topNormalized).build();
+    }
+
+    private Line getLine(Page page, Integer lineCounter, Boolean foundIntroOrAbstract,
+                         Line previousLine, Element paragraphElement, Paragraph paragraph,
+                         Element lineElement, String textContent) {
+        int topNormalized = 0;
+        int leftNormalized = 0;
+        if (lineElement.getAttribute("t") != null && !lineElement.getAttribute("t").isEmpty() &&
+                lineElement.getAttribute("l") != null && !lineElement.getAttribute("l").isEmpty()) {
+
+            int top = Integer.parseInt(lineElement.getAttribute("t").replaceAll(",", "\\."));
+            topNormalized = top / page.getTop();
+
+            int left = Integer.parseInt(lineElement.getAttribute("l").replaceAll(",", "\\."));
+            leftNormalized = left / page.getLeft();
+
+        }
+
+        Line.Builder lineBuilder = new Line.Builder(lineCounter, page)
+                .alignment(Alignment.get(paragraphElement.getAttribute("alignment")))
+                .previousLine(previousLine)
+                .content(textContent)
+                .bold(getBooleanValue(lineElement.getAttribute("bold")))
+                .italic(getBooleanValue(lineElement.getAttribute("italic")))
+                .underline(getBooleanValue(lineElement.getAttribute("underline"), "none"))
+                .fontSize(getFontSize(lineElement, page.getAverageFontSize()))
+                .fontFace(lineElement.getAttribute("fontFace"))
+                .left(leftNormalized)
+                .top(topNormalized);
+
+
+        if (!foundIntroOrAbstract) {  //special case for headers
+            lineBuilder.paragraph(Paragraph.HEADER);
+        } else {
+            lineBuilder.paragraph(paragraph);
+        }
+
+        //create the line instance here
+        return lineBuilder.build();
     }
 
     private boolean getBooleanValue(String valueString, String falseValue) {

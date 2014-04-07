@@ -1,10 +1,7 @@
 package unit.br.ufrgs.artic.parser.omnipage;
 
 import br.ufrgs.artic.exceptions.OmniPageParserException;
-import br.ufrgs.artic.parser.model.Alignment;
-import br.ufrgs.artic.parser.model.FontSize;
-import br.ufrgs.artic.parser.model.Line;
-import br.ufrgs.artic.parser.model.Paragraph;
+import br.ufrgs.artic.parser.model.*;
 import br.ufrgs.artic.parser.omnipage.OmniPageParser;
 import org.junit.Test;
 
@@ -29,6 +26,19 @@ public class OmniPageParserTest {
         assertEquals(3, firstLine.getLeft());
         assertEquals(0, firstLine.getTop());
         assertEquals(0, firstLine.getIndex());
+        assertEquals(6, firstLine.getWords().size());
+
+        Word firstWord = firstLine.getWords().get(0);
+        assertEquals(FontSize.BIG, firstWord.getFontSize());
+        assertEquals(Alignment.CENTERED, firstWord.getAlignment());
+        assertNull(firstWord.getPreviousWord());
+
+        Word secondWord = firstLine.getWords().get(1);
+        assertEquals(FontSize.BIG, secondWord.getFontSize());
+        assertEquals(Alignment.CENTERED, secondWord.getAlignment());
+        assertNotNull(secondWord.getPreviousWord());
+        assertEquals(firstWord, secondWord.getPreviousWord());
+
         assertNull(firstLine.getPreviousLine());
 
         Line secondLine = validLines.get(1);

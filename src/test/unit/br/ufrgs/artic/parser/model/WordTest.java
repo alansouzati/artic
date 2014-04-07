@@ -1,8 +1,6 @@
 package unit.br.ufrgs.artic.parser.model;
 
-import br.ufrgs.artic.parser.model.Alignment;
-import br.ufrgs.artic.parser.model.FontSize;
-import br.ufrgs.artic.parser.model.Word;
+import br.ufrgs.artic.parser.model.*;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -33,10 +31,14 @@ public class WordTest {
     public void itShouldCreateWordWhenOptionalParamsProvided() {
 
         Word previousWord = new Word.Builder(0, "Testing").build();
+        Line line = new Line.Builder(0, new Page(0, 0, 0)).build();
 
         Word validWord = new Word.Builder(0, "Testing 2").alignment(Alignment.CENTERED)
                 .fontFace("Times New Roman").fontSize(FontSize.BIG).bold(true)
-                .italic(true).underline(true).previousWord(previousWord).build();
+                .italic(true).underline(true).previousWord(previousWord).line(line).build();
+
+
+        line.addWord(validWord);
 
         assertNotNull(validWord);
         //line tests for required params
@@ -46,6 +48,7 @@ public class WordTest {
         //line tests for default params
         assertEquals(Alignment.CENTERED, validWord.getAlignment());
         assertEquals("Times New Roman", validWord.getFontFace());
+        assertEquals(line, validWord.getLine());
         assertEquals(FontSize.BIG, validWord.getFontSize());
         assertTrue(validWord.isBold());
         assertTrue(validWord.isItalic());

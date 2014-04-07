@@ -64,6 +64,12 @@ public class Line extends Element {
         return paragraph;
     }
 
+    public void addWord(Word word) {
+        if (word != null) {
+            words.add(word);
+        }
+    }
+
     public static class Builder extends ElementBuilder {
 
         //required params

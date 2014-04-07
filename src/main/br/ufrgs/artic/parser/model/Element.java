@@ -69,6 +69,18 @@ public abstract class Element {
         return top;
     }
 
+    public boolean getBold() {
+        return bold;
+    }
+
+    public boolean getItalic() {
+        return italic;
+    }
+
+    public boolean getUnderline() {
+        return underline;
+    }
+
     public static class ElementBuilder {
         //required params
         protected final int index;
@@ -82,7 +94,6 @@ public abstract class Element {
         protected FontSize fontSize = FontSize.NORMAL;
         protected int left = 0;
         protected int top = 0;
-
 
         public ElementBuilder(int index) {
             this.index = index;
