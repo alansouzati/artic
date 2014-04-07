@@ -1,8 +1,7 @@
-package unit.br.ufrgs.artic.parser.omnipage;
+package br.ufrgs.artic.parser.omnipage;
 
 import br.ufrgs.artic.exceptions.OmniPageParserException;
-import br.ufrgs.artic.parser.model.*;
-import br.ufrgs.artic.parser.omnipage.OmniPageParser;
+import br.ufrgs.artic.model.*;
 import org.junit.Test;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package br.ufrgs.artic.parser.model;
+package br.ufrgs.artic.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +68,54 @@ public class Line extends Element {
         if (word != null) {
             words.add(word);
         }
+    }
+
+    public String toCRF() {
+        StringBuilder lineCRF = new StringBuilder();
+
+        lineCRF.append("line_" + index).append(" ");
+        lineCRF.append(alignment.toString().toLowerCase()).append(" ");
+        lineCRF.append(isBold()).append(" ");
+        lineCRF.append(isUnderline()).append(" ");
+        lineCRF.append(isItalic()).append(" ");
+        lineCRF.append(getFontSize().toString().toLowerCase()).append(" ");
+        lineCRF.append(top).append(" ");
+        lineCRF.append(left).append(" ");
+        lineCRF.append(getContent().contains("@")).append(" ");
+        lineCRF.append(getLineSize()).append(" ");
+        lineCRF.append(paragraph.toString().toLowerCase()).append(" ");
+        lineCRF.append(getFormat()).append(" ");
+
+        return lineCRF.toString();
+    }
+
+    public String getFormat() {
+        String currentFormat = getFontSize().toString() + isBold() + isItalic() + getFontFace() + alignment;
+
+        String previousFormat = "";
+        if (previousLine != null) {
+            previousFormat = previousLine.getFontSize().toString() + previousLine.isBold() +
+                    previousLine.isItalic() + previousLine.getFontFace() + previousLine.alignment;
+        }
+
+        if (currentFormat.equals(previousFormat)) {
+            return "same";
+        } else {
+            return "new";
+        }
+    }
+
+    public String getLineSize() {
+        String[] words = content.split(" ");
+        String characterSize = "zero";
+        if (words.length >= 1 && words.length < 5) {
+            characterSize = "few";
+        } else if (words.length >= 5 && words.length < 10) {
+            characterSize = "medium";
+        } else if (words.length >= 10) {
+            characterSize = "many";
+        }
+        return characterSize;
     }
 
     public static class Builder extends ElementBuilder {

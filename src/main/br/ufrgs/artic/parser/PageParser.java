@@ -1,6 +1,6 @@
 package br.ufrgs.artic.parser;
 
-import br.ufrgs.artic.parser.model.Line;
+import br.ufrgs.artic.model.Line;
 
 import java.util.List;
 

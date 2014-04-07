@@ -1,8 +1,8 @@
 package br.ufrgs.artic.parser.omnipage;
 
 import br.ufrgs.artic.exceptions.OmniPageParserException;
+import br.ufrgs.artic.model.*;
 import br.ufrgs.artic.parser.PageParser;
-import br.ufrgs.artic.parser.model.*;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -154,9 +154,9 @@ public class OmniPageParser implements PageParser {
                 !wordElement.getAttribute("italic").isEmpty()) ?
                 getBooleanValue(wordElement.getAttribute("italic")) : line.getItalic();
 
-        boolean underline = (wordElement.getAttribute("underline") != null &&
-                !wordElement.getAttribute("underline").isEmpty()) ?
-                getBooleanValue(wordElement.getAttribute("underline"), "none") : line.getUnderline();
+        boolean underline = (wordElement.getAttribute("underlined") != null &&
+                !wordElement.getAttribute("underlined").isEmpty()) ?
+                getBooleanValue(wordElement.getAttribute("underlined"), "none") : line.getUnderline();
 
         return new Word.Builder(currentWordIndex, wordContent)
                 .previousWord(previousWord).line(line)
@@ -192,7 +192,7 @@ public class OmniPageParser implements PageParser {
                 .content(textContent)
                 .bold(getBooleanValue(lineElement.getAttribute("bold")))
                 .italic(getBooleanValue(lineElement.getAttribute("italic")))
-                .underline(getBooleanValue(lineElement.getAttribute("underline"), "none"))
+                .underline(getBooleanValue(lineElement.getAttribute("underlined"), "none"))
                 .fontSize(getFontSize(lineElement, page.getAverageFontSize()))
                 .fontFace(lineElement.getAttribute("fontFace"))
                 .left(leftNormalized)
@@ -210,7 +210,7 @@ public class OmniPageParser implements PageParser {
     }
 
     private boolean getBooleanValue(String valueString, String falseValue) {
-        return getBooleanValue(valueString) && !valueString.equals(falseValue);
+        return valueString != null && !valueString.isEmpty() && !valueString.equals(falseValue);
     }
 
     public FontSize getFontSize(Element element, double averageFontSize) {
@@ -309,7 +309,7 @@ public class OmniPageParser implements PageParser {
                 if (textContent.length() > 3) {
 
                     checkMissingAttribute(lineElement, currentRun.getAttribute("bold"), "bold");
-                    checkMissingAttribute(lineElement, currentRun.getAttribute("bold"), "bold");
+                    checkMissingAttribute(lineElement, currentRun.getAttribute("italic"), "italic");
                     checkMissingAttribute(lineElement, currentRun.getAttribute("fontFace"), "fontFace");
                     checkMissingAttribute(lineElement, currentRun.getAttribute("fontFamily"), "fontFamily");
 

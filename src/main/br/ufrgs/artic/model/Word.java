@@ -1,4 +1,4 @@
-package br.ufrgs.artic.parser.model;
+package br.ufrgs.artic.model;
 
 /**
  * This class defines the word with rich text information coming from

@@ -1,4 +1,4 @@
-package br.ufrgs.artic.parser.model;
+package br.ufrgs.artic.model;
 
 /**
  * Define the possible alignment values for general elements.

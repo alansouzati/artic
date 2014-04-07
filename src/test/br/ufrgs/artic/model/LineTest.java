@@ -1,6 +1,5 @@
-package unit.br.ufrgs.artic.parser.model;
+package br.ufrgs.artic.model;
 
-import br.ufrgs.artic.parser.model.*;
 import org.junit.Test;
 
 import java.util.ArrayList;

@@ -1,0 +1,62 @@
+#unigram
+#identifier
+U0:%x[0,0]
+#alignment
+U1:%x[0,1]
+# bold
+U2:%x[0,2]
+# underline
+U3:%x[0,3]
+# italic
+U4:%x[0,4]
+# fontSize
+U5:%x[0,5]
+# top
+U6:%x[0,6]
+# left
+U7:%x[0,7]
+# contains @
+U8:%x[0,8]
+# number of words
+U9:%x[0,9]
+# paragraph information
+U10:%x[0,10]
+# format information
+U11:%x[0,11]
+
+#font size window
+U12:%x[-2,5]
+U13:%x[-1,5]
+
+#bold window
+U14:%x[-1,2]
+U15:%x[-2,2]
+U16:%x[1,2]
+U17:%x[2,2]
+
+#alignment window
+U18:%x[-1,1]
+U19:%x[-2,1]
+U20:%x[1,1]
+U21:%x[2,1]
+
+#paragraph window
+U22:%x[-1,10]
+U23:%x[-2,10]
+U24:%x[1,10]
+U25:%x[2,10]
+
+#format window
+U26:%x[-1,11]
+U27:%x[-2,11]
+U28:%x[1,11]
+U29:%x[2,11]
+
+# alignment and font size
+U30:%x[0,1]/%x[0,5]
+
+# identifier and top
+U31:%x[0,0]/%x[0,6]
+
+#Automatically create all bigram features
+B
