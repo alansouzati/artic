@@ -22,4 +22,20 @@ public class CRFLine {
         this.line = line;
         this.lineClass = lineClass;
     }
+
+    public LineClass getLineClass() {
+        return lineClass;
+    }
+
+    public Line getLine() {
+        return line;
+    }
+
+    public String toCRF() {
+        StringBuilder crfLineSB = new StringBuilder();
+        crfLineSB.append(line.toCRF()).append(" ");
+        crfLineSB.append(lineClass.toString());
+
+        return crfLineSB.toString();
+    }
 }
