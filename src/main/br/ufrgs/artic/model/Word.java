@@ -1,5 +1,7 @@
 package br.ufrgs.artic.model;
 
+import static br.ufrgs.artic.utils.CommonUtils.*;
+
 /**
  * This class defines the word with rich text information coming from
  * possibly an OCR engine.
@@ -23,6 +25,81 @@ public class Word extends Element {
 
     public Line getLine() {
         return line;
+    }
+
+    public String toHeaderCRF() {
+        StringBuilder headerWordCRF = new StringBuilder();
+
+        headerWordCRF.append(getContentNoSpace().replaceAll("\\n", "").replaceAll(" ", "")).append(" ");
+        headerWordCRF.append(index).append(" ");
+        headerWordCRF.append(line.getIndex()).append(" ");
+        headerWordCRF.append(getCharacterSize()).append(" ");
+        headerWordCRF.append(isNumeral()).append(" ");
+        headerWordCRF.append(isPossibleConference()).append(" ");
+        headerWordCRF.append(isMonth()).append(" ");
+        headerWordCRF.append(isNumberOnly()).append(" ");
+        headerWordCRF.append(isYear()).append(" ");
+        headerWordCRF.append(isCountry()).append(" ");
+        headerWordCRF.append(hasSpecialChar()).append(" ");
+        headerWordCRF.append(isWebsite()).append(" ");
+
+        return headerWordCRF.toString();
+    }
+
+    public boolean isPossibleConference() {
+        String text = getContentNoSpace().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        return "conference".equals(text) || "conf".equals(text);
+    }
+
+    public boolean isNumeral() {
+        return NUMERAL_PATTERN.matcher(getContentNoSpecialCharacter()).matches();
+    }
+
+    public boolean isMonth() {
+        return MONTH_LIST.contains(getContentNoSpecialCharacter().toLowerCase());
+    }
+
+    public boolean hasSpecialChar() {
+        return SPECIAL_CHAR_PATTERN.matcher(getContentNoSpace()).find();
+    }
+
+    public boolean isWebsite() {
+        return WEBSITE_PATTERN.matcher(getContentNoSpace()).find();
+    }
+
+    public String getCharacterSize() {
+        String characterSize = "zero";
+        int length = getContent().length();
+        if (length >= 1 && length < 5) {
+            characterSize = "few";
+        } else if (length >= 5 && length < 10) {
+            characterSize = "medium";
+        } else if (length >= 10) {
+            characterSize = "many";
+        }
+
+        return characterSize;
+    }
+
+    public boolean isNumberOnly() {
+        return NUMBER_ONLY_PATTERN.matcher(getContentNoSpecialCharacter().toLowerCase()).matches();
+    }
+
+    public boolean isCountry() {
+        return COUNTRY_LIST.contains(getContentNoSpecialCharacter().toLowerCase());
+    }
+
+    public boolean isYear() {
+        boolean year = false;
+        String wordClean = getContentNoSpace().replaceAll("c?", "").replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        if (isNumberOnly() && wordClean.length() == 4) {
+            Integer possibleYear = Integer.valueOf(wordClean);
+
+            if (possibleYear > 1850 && possibleYear <= CURRENT_YEAR) {
+                year = true;
+            }
+        }
+        return year;
     }
 
     public static class Builder extends ElementBuilder {

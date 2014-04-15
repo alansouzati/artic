@@ -81,6 +81,27 @@ public abstract class Element {
         return underline;
     }
 
+    private String contentNoSpace;
+    private String contentNoSpecialCharacter;
+
+    public String getContentNoSpace() {
+
+        if (contentNoSpace == null) {
+            contentNoSpace = getContent().replaceAll("\\n", "").replaceAll(" ", "");
+        }
+
+        return contentNoSpace;
+    }
+
+    public String getContentNoSpecialCharacter() {
+
+        if (contentNoSpecialCharacter == null) {
+            contentNoSpecialCharacter = getContentNoSpace().replaceAll("[^a-zA-Z0-9]", "");
+        }
+
+        return contentNoSpecialCharacter;
+    }
+
     public static class ElementBuilder {
         //required params
         protected final int index;
