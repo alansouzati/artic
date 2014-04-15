@@ -25,12 +25,12 @@ public final class CRFClassifier {
     }
 
     /**
-     * This method takes a list of unclassified lines and classify them using conditional random fields
+     * This method takes a list of unclassified lines and classifyLines them using conditional random fields
      *
      * @param lines unclassified lines to be used by the CRF engine
      * @return the list of classified lines after the CRF execution
      */
-    public static List<CRFLine> classify(List<Line> lines) throws CRFClassifierException {
+    public static List<CRFLine> classifyLines(List<Line> lines) throws CRFClassifierException {
 
         if (lines == null) {
             throw new IllegalArgumentException("Line is a required attribute.");
@@ -64,12 +64,12 @@ public final class CRFClassifier {
 
             } finally {
                 if (crfPaperFile.delete()) {
-                    LOGGER.error("Could not delete: " + crfPaperFile.getAbsolutePath());
+                    LOGGER.warn("Could not delete: " + crfPaperFile.getAbsolutePath());
                 }
             }
         } catch (InterruptedException | IOException e) {
             LOGGER.error("Problem when classifying the paper lines. ", e);
-            throw new CRFClassifierException("An unexpected problem occurred trying to classify the paper lines.", e);
+            throw new CRFClassifierException("An unexpected problem occurred trying to classifyLines the paper lines.", e);
         }
 
         return crfLines;

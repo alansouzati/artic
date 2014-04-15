@@ -36,7 +36,7 @@ public class CRFClassifierTest {
 
         List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/sample.xml").getFile()).getLines();
 
-        List<CRFLine> crfLines = CRFClassifier.classify(lines);
+        List<CRFLine> crfLines = CRFClassifier.classifyLines(lines);
 
         assertNotNull(crfLines);
         assertEquals(lines.size(), crfLines.size());
