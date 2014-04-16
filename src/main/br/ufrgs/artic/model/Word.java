@@ -27,6 +27,121 @@ public class Word extends Element {
         return line;
     }
 
+    private boolean isPossibleConference() {
+        String text = getContentNoSpace().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        return "conference".equals(text) || "conf".equals(text);
+    }
+
+    private boolean isNumeral() {
+        return NUMERAL_PATTERN.matcher(getContentNoSpecialCharacter()).matches();
+    }
+
+    private boolean isMonth() {
+        return MONTH_LIST.contains(getContentNoSpecialCharacter().toLowerCase());
+    }
+
+    private boolean hasSpecialChar() {
+        return SPECIAL_CHAR_PATTERN.matcher(getContentNoSpace()).find();
+    }
+
+    private boolean isWebsite() {
+        return WEBSITE_PATTERN.matcher(getContentNoSpace()).find();
+    }
+
+    private String getCharacterSize() {
+        String characterSize = "zero";
+        int length = getContent().length();
+        if (length >= 1 && length < 5) {
+            characterSize = "few";
+        } else if (length >= 5 && length < 10) {
+            characterSize = "medium";
+        } else if (length >= 10) {
+            characterSize = "many";
+        }
+
+        return characterSize;
+    }
+
+    private boolean isNumberOnly() {
+        return NUMBER_ONLY_PATTERN.matcher(getContentNoSpecialCharacter().toLowerCase()).matches();
+    }
+
+    private boolean isCountry() {
+        return COUNTRY_LIST.contains(getContentNoSpecialCharacter().toLowerCase());
+    }
+
+    private boolean isYear() {
+        boolean year = false;
+        String wordClean = getContentNoSpace().replaceAll("c?", "").replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        if (isNumberOnly() && wordClean.length() == 4) {
+            Integer possibleYear = Integer.valueOf(wordClean);
+
+            if (possibleYear > 1850 && possibleYear <= CURRENT_YEAR) {
+                year = true;
+            }
+        }
+        return year;
+    }
+
+    private boolean isPossibleEmail() {
+        return EMAIL_PATTERN.matcher(getContent().toLowerCase()).find();
+    }
+
+    private boolean isPossibleAffiliation() {
+        return isPossibleUniversity() || isCountry() || isPossibleDepartment() || isPossibleContinentOrOcean();
+    }
+
+    private boolean isPossibleUniversity() {
+        return UNIVERSITY_PATTERN.matcher(getContentNoSpecialCharacter().toLowerCase()).find();
+    }
+
+    private boolean isPossibleDepartment() {
+        return DEPARTMENT_PATTERN.matcher(getContentNoSpecialCharacter().toLowerCase()).find();
+    }
+
+    private boolean isPossibleContinentOrOcean() {
+        return CONTINENT_OCEANS_PATTERN.matcher(getContentNoSpecialCharacter().toLowerCase()).find();
+    }
+
+    private String getFormat() {
+        String currentFormat = getFontSize().toString() + isBold() + isItalic() + getFontFace() + alignment;
+
+        String previousFormat = "";
+        if (previousWord != null) {
+            previousFormat = previousWord.getFontSize().toString() + previousWord.isBold() +
+                    previousWord.isItalic() + previousWord.getFontFace() + previousWord.alignment;
+        }
+
+        if (currentFormat.equals(previousFormat)) {
+            return "same";
+        } else {
+            return "new";
+        }
+    }
+
+    private boolean isPossibleEmailApart() {
+        String contentTrim = getContentNoSpace().trim();
+        return (contentTrim.startsWith("{") || contentTrim.startsWith("[")) &&
+                (contentTrim.endsWith(",") || contentTrim.endsWith(";"));
+    }
+
+    public String toAuthorInformationCRF() {
+        StringBuilder authorInformationWordCRF = new StringBuilder();
+
+        authorInformationWordCRF.append(getContentNoSpace().replaceAll("\\n", "").replaceAll(" ", "")).append(" ");
+        authorInformationWordCRF.append(index).append(" ");
+        authorInformationWordCRF.append(line.getIndex()).append(" ");
+        authorInformationWordCRF.append(getCharacterSize()).append(" ");
+        authorInformationWordCRF.append(isPossibleEmail()).append(" ");
+        authorInformationWordCRF.append(!isPossibleEmail() && isPossibleAffiliation()).append(" ");
+        authorInformationWordCRF.append(isWebsite()).append(" ");
+        authorInformationWordCRF.append(getFormat()).append(" ");
+        authorInformationWordCRF.append(getFontSize().toString().toLowerCase()).append(" ");
+        authorInformationWordCRF.append(isPossibleEmailApart()).append(" ");
+
+        return authorInformationWordCRF.toString();
+    }
+
     public String toHeaderCRF() {
         StringBuilder headerWordCRF = new StringBuilder();
 
@@ -44,62 +159,6 @@ public class Word extends Element {
         headerWordCRF.append(isWebsite()).append(" ");
 
         return headerWordCRF.toString();
-    }
-
-    public boolean isPossibleConference() {
-        String text = getContentNoSpace().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-        return "conference".equals(text) || "conf".equals(text);
-    }
-
-    public boolean isNumeral() {
-        return NUMERAL_PATTERN.matcher(getContentNoSpecialCharacter()).matches();
-    }
-
-    public boolean isMonth() {
-        return MONTH_LIST.contains(getContentNoSpecialCharacter().toLowerCase());
-    }
-
-    public boolean hasSpecialChar() {
-        return SPECIAL_CHAR_PATTERN.matcher(getContentNoSpace()).find();
-    }
-
-    public boolean isWebsite() {
-        return WEBSITE_PATTERN.matcher(getContentNoSpace()).find();
-    }
-
-    public String getCharacterSize() {
-        String characterSize = "zero";
-        int length = getContent().length();
-        if (length >= 1 && length < 5) {
-            characterSize = "few";
-        } else if (length >= 5 && length < 10) {
-            characterSize = "medium";
-        } else if (length >= 10) {
-            characterSize = "many";
-        }
-
-        return characterSize;
-    }
-
-    public boolean isNumberOnly() {
-        return NUMBER_ONLY_PATTERN.matcher(getContentNoSpecialCharacter().toLowerCase()).matches();
-    }
-
-    public boolean isCountry() {
-        return COUNTRY_LIST.contains(getContentNoSpecialCharacter().toLowerCase());
-    }
-
-    public boolean isYear() {
-        boolean year = false;
-        String wordClean = getContentNoSpace().replaceAll("c?", "").replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-        if (isNumberOnly() && wordClean.length() == 4) {
-            Integer possibleYear = Integer.valueOf(wordClean);
-
-            if (possibleYear > 1850 && possibleYear <= CURRENT_YEAR) {
-                year = true;
-            }
-        }
-        return year;
     }
 
     public static class Builder extends ElementBuilder {

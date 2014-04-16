@@ -30,12 +30,12 @@ public final class CRFClassifier {
     }
 
     /**
-     * This method takes a list of unclassified lines and classifyLines them using conditional random fields
+     * This method takes a list of unclassified lines and firstLevelCRF them using conditional random fields
      *
      * @param lines unclassified lines to be used by the CRF engine
      * @return the list of classified lines after the CRF execution
      */
-    public static List<CRFLine> classifyLines(List<Line> lines) throws CRFClassifierException {
+    public static List<CRFLine> firstLevelCRF(List<Line> lines) throws CRFClassifierException {
 
         if (lines == null) {
             throw new IllegalArgumentException("Line is a required attribute.");
@@ -65,7 +65,7 @@ public final class CRFClassifier {
             }
         } catch (InterruptedException | IOException e) {
             LOGGER.error("Problem when classifying the paper lines. ", e);
-            throw new CRFClassifierException("An unexpected problem occurred trying to classifyLines the paper lines.", e);
+            throw new CRFClassifierException("An unexpected problem occurred trying to firstLevelCRF the paper lines.", e);
         }
 
         return crfLines;
@@ -76,9 +76,9 @@ public final class CRFClassifier {
      * it classifies the give words.
      *
      * @param crfLines all the classified CRF lines used to build the CRF words map.
-     * @return the map of all classified words by line class
+     * @return the map of all classified words by line class (this map will contain only the Line classes that requires a second level)
      */
-    public static Map<LineClass, List<CRFWord>> classifyWords(List<CRFLine> crfLines) throws CRFClassifierException {
+    public static Map<LineClass, List<CRFWord>> secondLevelCRF(List<CRFLine> crfLines) throws CRFClassifierException {
 
         Map<LineClass, List<Word>> wordsMapByLineClass = getWordsMapByLineClass(crfLines);
 
@@ -88,11 +88,8 @@ public final class CRFClassifier {
                 case HEADER:
                     crfWords.put(lineClass, classifyHeader(wordsMapByLineClass.get(lineClass)));
                     break;
-                case TITLE:
-                    break;
                 case AUTHOR_INFORMATION:
-                    break;
-                case BODY:
+                    crfWords.put(lineClass, classifyAuthorInformation(wordsMapByLineClass.get(lineClass)));
                     break;
                 case FOOTNOTE:
                     break;
@@ -102,55 +99,9 @@ public final class CRFClassifier {
         return crfWords;
     }
 
-    private static List<CRFWord> classifyHeader(List<Word> words) throws CRFClassifierException {
-        if (words == null) {
-            throw new IllegalArgumentException("Words is a required attribute.");
-        }
-
-        List<CRFWord> headerWords = new ArrayList<>();
-
-        try {
-            ProcessBuilder process = getProcessBuilder(getHeaderCRFWordsAsString(words), "/crf/models/headerSecondLevel.crf");
-            Process pr = process.start();
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()))) {
-
-                String line;
-                int index = 0;
-                CRFWord crfWord;
-                while ((line = in.readLine()) != null) {
-                    if (!line.isEmpty()) {
-                        String[] columns = line.split("\t");
-                        String clazz = columns[columns.length - 1]; // class is the last line
-                        Word currentWord = words.get(index++);
-
-                        crfWord = new CRFWord(currentWord, WordClass.get(clazz));
-                        headerWords.add(crfWord);
-                    }
-
-                }
-                pr.waitFor();
-
-            }
-        } catch (InterruptedException | IOException e) {
-            LOGGER.error("Problem when classifying the paper lines. ", e);
-            throw new CRFClassifierException("An unexpected problem occurred trying to classifyLines the paper lines.", e);
-        }
-
-        return headerWords;
-    }
-
     /**
-     * SUPPORT METHODS
+     * ============== SUPPORT METHODS =================
      */
-
-    private static ProcessBuilder getProcessBuilder(String trainFilePath, String modelPath) throws IOException {
-        File crfPaperFile = File.createTempFile("temp", Long.toString(System.nanoTime()));
-        FileUtils.writeStringToFile(crfPaperFile, trainFilePath);
-
-        return new ProcessBuilder("crf_test", "-m",
-                CRFClassifier.class.getResource(modelPath).getFile(),
-                crfPaperFile.getAbsolutePath());
-    }
 
     /**
      * This method converts a list of lines into the CRF++ format
@@ -184,6 +135,47 @@ public final class CRFClassifier {
         return headerCRFWords.toString();
     }
 
+    /**
+     * This method converts a list of WORDS into the CRF++ format for author information level
+     *
+     * @param words the words to be converted to the CRF++ format for the author information level
+     * @return the string with the set of words matching CRF++ format for the author information level
+     */
+    protected static String getAuthorInformationCRFWordsAsString(List<Word> words) {
+        StringBuilder authorInformationCRFWords = new StringBuilder();
+
+        for (Word word : words) {
+            authorInformationCRFWords.append(word.toAuthorInformationCRF()).append("\n");
+        }
+
+        return authorInformationCRFWords.toString();
+    }
+
+    private static List<CRFWord> classifyAuthorInformation(List<Word> words) throws CRFClassifierException {
+        if (words == null) {
+            throw new IllegalArgumentException("Words is a required attribute.");
+        }
+
+        return getCRFWords(words, getAuthorInformationCRFWordsAsString(words), "/crf/models/authorInformationSecondLevel.crf");
+    }
+
+    private static List<CRFWord> classifyHeader(List<Word> words) throws CRFClassifierException {
+        if (words == null) {
+            throw new IllegalArgumentException("Words is a required attribute.");
+        }
+
+        return getCRFWords(words, getHeaderCRFWordsAsString(words), "/crf/models/headerSecondLevel.crf");
+    }
+
+    private static ProcessBuilder getProcessBuilder(String trainFilePath, String modelPath) throws IOException {
+        File crfPaperFile = File.createTempFile("temp", Long.toString(System.nanoTime()));
+        FileUtils.writeStringToFile(crfPaperFile, trainFilePath);
+
+        return new ProcessBuilder("crf_test", "-m",
+                CRFClassifier.class.getResource(modelPath).getFile(),
+                crfPaperFile.getAbsolutePath());
+    }
+
     private static Map<LineClass, List<Word>> getWordsMapByLineClass(List<CRFLine> crfLines) {
         Map<LineClass, List<Word>> wordsMapByLineClass = new HashMap<>();
         for (CRFLine crfLine : crfLines) {
@@ -196,5 +188,37 @@ public final class CRFClassifier {
 
         }
         return wordsMapByLineClass;
+    }
+
+    private static List<CRFWord> getCRFWords(List<Word> words, String paperInCRFFilePath, String model) throws CRFClassifierException {
+        List<CRFWord> classifiedWords = new ArrayList<>();
+
+        try {
+            ProcessBuilder process = getProcessBuilder(paperInCRFFilePath, model);
+            Process pr = process.start();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()))) {
+
+                String line;
+                int index = 0;
+                CRFWord crfWord;
+                while ((line = in.readLine()) != null) {
+                    if (!line.isEmpty()) {
+                        String[] columns = line.split("\t");
+                        String clazz = columns[columns.length - 1]; // class is the last line
+                        Word currentWord = words.get(index++);
+
+                        crfWord = new CRFWord(currentWord, WordClass.get(clazz));
+                        classifiedWords.add(crfWord);
+                    }
+
+                }
+                pr.waitFor();
+
+            }
+        } catch (InterruptedException | IOException e) {
+            LOGGER.error("Problem when classifying the paper lines. ", e);
+            throw new CRFClassifierException("An unexpected problem occurred trying to firstLevelCRF the paper lines.", e);
+        }
+        return classifiedWords;
     }
 }

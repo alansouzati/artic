@@ -41,21 +41,10 @@ public abstract class Element {
         return fontSize;
     }
 
-    public boolean isBold() {
-        return bold;
-    }
-
-    public boolean isItalic() {
-        return italic;
-    }
-
-    public boolean isUnderline() {
-        return underline;
-    }
-
     public String getContent() {
         return content;
     }
+
 
     public int getIndex() {
         return index;
@@ -78,6 +67,18 @@ public abstract class Element {
     }
 
     public boolean getUnderline() {
+        return underline;
+    }
+
+    protected boolean isBold() {
+        return bold;
+    }
+
+    protected boolean isItalic() {
+        return italic;
+    }
+
+    protected boolean isUnderline() {
         return underline;
     }
 

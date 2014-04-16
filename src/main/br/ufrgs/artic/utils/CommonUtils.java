@@ -18,6 +18,12 @@ public final class CommonUtils {
     public static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     public static final Pattern WEBSITE_PATTERN = Pattern.compile("www|https?");
     public static final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
+    public static final Pattern EMAIL_PATTERN = Pattern.compile("@|email|e\\-mail");
+    public static final Pattern UNIVERSITY_PATTERN = Pattern.compile("university|faculty");
+    public static final Pattern DEPARTMENT_PATTERN = Pattern.compile("department|center|laboratory|division|" +
+            "school|group|research|computer|dept|education|technology|science|defence|develop|development|" +
+            "information|branch|institute|library|medic|system|database|software|state|academic|tech|point|normal|community|language|centre|computation");
+    public static final Pattern CONTINENT_OCEANS_PATTERN = Pattern.compile("asia|africa|north|america|south|antarctica|europe|australia|ocean|pacific|atlantic|indian|southern|arctic");
     public static final List<String> MONTH_LIST;
     public static final List<String> COUNTRY_LIST;
 

@@ -89,7 +89,7 @@ public class Line extends Element {
         return lineCRF.toString();
     }
 
-    public String getFormat() {
+    private String getFormat() {
         String currentFormat = getFontSize().toString() + isBold() + isItalic() + getFontFace() + alignment;
 
         String previousFormat = "";
@@ -105,7 +105,7 @@ public class Line extends Element {
         }
     }
 
-    public String getLineSize() {
+    private String getLineSize() {
         String[] words = content.split(" ");
         String characterSize = "zero";
         if (words.length >= 1 && words.length < 5) {
