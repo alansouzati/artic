@@ -1,5 +1,12 @@
 package br.ufrgs.artic.utils;
 
+import org.apache.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -9,6 +16,8 @@ import java.util.regex.Pattern;
  * Utility class with common constants + static content available to the application.
  */
 public final class CommonUtils {
+
+    private static final Logger LOGGER = Logger.getLogger("CommonUtils");
 
     private CommonUtils() {
     }
@@ -24,8 +33,15 @@ public final class CommonUtils {
             "school|group|research|computer|dept|education|technology|science|defence|develop|development|" +
             "information|branch|institute|library|medic|system|database|software|state|academic|tech|point|normal|community|language|centre|computation");
     public static final Pattern CONTINENT_OCEANS_PATTERN = Pattern.compile("asia|africa|north|america|south|antarctica|europe|australia|ocean|pacific|atlantic|indian|southern|arctic");
+    public static final Pattern CONFERENCE_NAME_PATTERN = Pattern.compile("[A-Z]+(('|’|`)?\\d\\d)?(,|\\.|;)?");
+    public static final Pattern DAYS_PATTERN = Pattern.compile("(\\d\\d)(-|–)(\\d\\d)(th|st|nd|rd)?(,|\\.|;)?");
+    public static final Pattern ISBN_PATTERN = Pattern.compile("(\\d+(\\-|–))(\\d+(\\-|–))(\\d+(\\-|–))[\\d+(\\-|–)]+(/)?([/\\d+]+)(\\.\\.\\.[$|\\.|,|\\d]+)?(,|\\.|;)*");
+    public static final Pattern PUBLISHER_PATTERN = Pattern.compile("acm|elsevier|ieee|springer-verlag|springer");
+    public static final Pattern ISSN_PATTERN = Pattern.compile("(\\d\\d\\d\\d)(-|–)(\\d\\d\\d\\d)[/|$]*(,|\\.|;)?");
+    public static final Pattern DOI_PATTERN = Pattern.compile("(doi:)?(\\d\\d\\.\\d\\d\\d\\d)/[[A-Za-z0-9]+\\.]+");
     public static final List<String> MONTH_LIST;
     public static final List<String> COUNTRY_LIST;
+    public static final List<String> CONFERENCE_LIST;
 
     static {
         MONTH_LIST = new ArrayList<>();
@@ -298,5 +314,20 @@ public final class CommonUtils {
         COUNTRY_LIST.add("yemen");
         COUNTRY_LIST.add("zambia");
         COUNTRY_LIST.add("zimbabwe");
+
+        CONFERENCE_LIST = new ArrayList<>();
+
+        try {
+            FileInputStream fis = new FileInputStream(CommonUtils.class.getResource("/conferences.txt").getFile());
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                CONFERENCE_LIST.add(line);
+            }
+
+        } catch (IOException e) {
+            LOGGER.error("A problem occurred trying to load the conference list.", e);
+        }
     }
 }

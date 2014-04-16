@@ -92,6 +92,7 @@ public final class CRFClassifier {
                     crfWords.put(lineClass, classifyAuthorInformation(wordsMapByLineClass.get(lineClass)));
                     break;
                 case FOOTNOTE:
+                    crfWords.put(lineClass, classifyFootnote(wordsMapByLineClass.get(lineClass)));
                     break;
             }
         }
@@ -151,6 +152,22 @@ public final class CRFClassifier {
         return authorInformationCRFWords.toString();
     }
 
+    /**
+     * This method converts a list of WORDS into the CRF++ format for the footnote level
+     *
+     * @param words the words to be converted to the CRF++ format for the footnote level
+     * @return the string with the set of words matching CRF++ format for the footnote level
+     */
+    protected static String getFootnoteCRFWordsAsString(List<Word> words) {
+        StringBuilder footnoteCRFWords = new StringBuilder();
+
+        for (Word word : words) {
+            footnoteCRFWords.append(word.toFootnoteCRF()).append("\n");
+        }
+
+        return footnoteCRFWords.toString();
+    }
+
     private static List<CRFWord> classifyAuthorInformation(List<Word> words) throws CRFClassifierException {
         if (words == null) {
             throw new IllegalArgumentException("Words is a required attribute.");
@@ -158,6 +175,15 @@ public final class CRFClassifier {
 
         return getCRFWords(words, getAuthorInformationCRFWordsAsString(words), "/crf/models/authorInformationSecondLevel.crf");
     }
+
+    private static List<CRFWord> classifyFootnote(List<Word> words) throws CRFClassifierException {
+        if (words == null) {
+            throw new IllegalArgumentException("Words is a required attribute.");
+        }
+
+        return getCRFWords(words, getFootnoteCRFWordsAsString(words), "/crf/models/footnoteSecondLevel.crf");
+    }
+
 
     private static List<CRFWord> classifyHeader(List<Word> words) throws CRFClassifierException {
         if (words == null) {

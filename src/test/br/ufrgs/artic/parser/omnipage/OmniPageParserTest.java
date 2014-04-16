@@ -6,7 +6,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class OmniPageParserTest {
 
@@ -17,49 +18,27 @@ public class OmniPageParserTest {
 
         assertNotNull(validLines);
 
-        Line firstLine = validLines.get(0);
+        Line titleLine = validLines.get(2);
 
-        assertEquals(FontSize.BIG, firstLine.getFontSize());
-        assertEquals(Alignment.CENTERED, firstLine.getAlignment());
-        assertEquals(Paragraph.HEADER, firstLine.getParagraph());
-        assertEquals(3, firstLine.getLeft());
-        assertEquals(0, firstLine.getTop());
-        assertEquals(0, firstLine.getIndex());
-        assertEquals(6, firstLine.getWords().size());
+        assertEquals(FontSize.BIG, titleLine.getFontSize());
+        assertEquals(Alignment.CENTERED, titleLine.getAlignment());
+        assertEquals(Paragraph.HEADER, titleLine.getParagraph());
+        assertEquals(2, titleLine.getLeft());
+        assertEquals(2, titleLine.getTop());
+        assertEquals(2, titleLine.getIndex());
+        assertEquals(6, titleLine.getWords().size());
 
-        Word firstWord = firstLine.getWords().get(0);
+        Word firstWord = titleLine.getWords().get(0);
         assertEquals(FontSize.BIG, firstWord.getFontSize());
         assertEquals(Alignment.CENTERED, firstWord.getAlignment());
-        assertNull(firstWord.getPreviousWord());
+        assertNotNull(firstWord.getPreviousWord());
 
-        Word secondWord = firstLine.getWords().get(1);
+        Word secondWord = titleLine.getWords().get(1);
         assertEquals(FontSize.BIG, secondWord.getFontSize());
         assertEquals(Alignment.CENTERED, secondWord.getAlignment());
         assertNotNull(secondWord.getPreviousWord());
         assertEquals(firstWord, secondWord.getPreviousWord());
 
-        assertNull(firstLine.getPreviousLine());
-
-        Line secondLine = validLines.get(1);
-
-        assertEquals(FontSize.MEDIUM, secondLine.getFontSize());
-        assertEquals(Alignment.CENTERED, secondLine.getAlignment());
-        assertEquals(Paragraph.HEADER, secondLine.getParagraph());
-        assertEquals(1, secondLine.getIndex());
-        assertNotNull(secondLine.getPreviousLine());
-        assertEquals(firstLine, secondLine.getPreviousLine());
-
-        Line farAwayLine = validLines.get(9);
-
-        assertEquals(FontSize.MEDIUM, farAwayLine.getFontSize());
-        assertEquals(Alignment.LEFT, farAwayLine.getAlignment());
-        assertEquals(Paragraph.NEW, farAwayLine.getParagraph());
-        assertEquals(9, farAwayLine.getIndex());
-
-        Line veryFarAwayLine = validLines.get(24);
-
-        assertEquals(FontSize.NORMAL, veryFarAwayLine.getFontSize());
-        assertEquals(Alignment.JUSTIFIED, veryFarAwayLine.getAlignment());
-        assertEquals(24, veryFarAwayLine.getIndex());
+        assertNotNull(titleLine.getPreviousLine());
     }
 }

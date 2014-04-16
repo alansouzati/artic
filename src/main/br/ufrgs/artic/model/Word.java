@@ -1,5 +1,7 @@
 package br.ufrgs.artic.model;
 
+import org.apache.commons.lang.StringUtils;
+
 import static br.ufrgs.artic.utils.CommonUtils.*;
 
 /**
@@ -127,6 +129,48 @@ public class Word extends Element {
                 (contentTrim.endsWith(",") || contentTrim.endsWith(";"));
     }
 
+    private boolean isPossibleConferenceName() {
+        boolean isConferenceName = false;
+
+        for (String conference : CONFERENCE_LIST) {
+            if (conference.equals(getContentNoSpace().replaceAll("[^a-zA-Z]", ""))) {
+                isConferenceName = true;
+                break;
+            }
+        }
+
+        return (CONFERENCE_NAME_PATTERN.matcher(getContentNoSpace()).matches() || isConferenceName ||
+                (getContentNoSpace().length() <= 5 && StringUtils.isAllUpperCase(getContentNoSpace()))) && !isCountry();
+    }
+
+    private boolean isDays() {
+        String text = getContentNoSpace();
+        for (String month : MONTH_LIST) {
+            if (text.contains(month)) {
+                text = text.replaceAll(month, "");
+                break;
+            }
+
+        }
+        return DAYS_PATTERN.matcher(text).matches();
+    }
+
+    private boolean isISBN() {
+        return ISBN_PATTERN.matcher(getContentNoSpace()).matches();
+    }
+
+    private boolean isPublisher() {
+        return PUBLISHER_PATTERN.matcher(getContentNoSpace().toLowerCase()).find();
+    }
+
+    private boolean isISSN() {
+        return ISSN_PATTERN.matcher(getContentNoSpace()).matches();
+    }
+
+    private boolean isDOI() {
+        return DOI_PATTERN.matcher(getContentNoSpace()).matches() || getContentNoSpace().toLowerCase().trim().startsWith("doi:");
+    }
+
     public String toAuthorInformationCRF() {
         StringBuilder authorInformationWordCRF = new StringBuilder();
 
@@ -161,6 +205,30 @@ public class Word extends Element {
         headerWordCRF.append(isWebsite()).append(" ");
 
         return headerWordCRF.toString();
+    }
+
+    public String toFootnoteCRF() {
+        StringBuilder footnoteWordCRF = new StringBuilder();
+
+        footnoteWordCRF.append(getContentNoSpace()).append(" ");
+        footnoteWordCRF.append(index).append(" ");
+        footnoteWordCRF.append(lineIndex).append(" ");
+        footnoteWordCRF.append(getCharacterSize()).append(" ");
+        footnoteWordCRF.append(isMonth()).append(" ");
+        footnoteWordCRF.append(isPossibleConferenceName()).append(" ");
+        footnoteWordCRF.append(isDays()).append(" ");
+        footnoteWordCRF.append(isCountry()).append(" ");
+        footnoteWordCRF.append(isYear()).append(" ");
+        footnoteWordCRF.append(isWebsite()).append(" ");
+        footnoteWordCRF.append(isISBN()).append(" ");
+        footnoteWordCRF.append(isPublisher()).append(" ");
+        footnoteWordCRF.append(isPossibleEmail()).append(" ");
+        footnoteWordCRF.append(isNumberOnly()).append(" ");
+        footnoteWordCRF.append(isPossibleAffiliation()).append(" ");
+        footnoteWordCRF.append(isISSN()).append(" ");
+        footnoteWordCRF.append(isDOI()).append(" ");
+
+        return footnoteWordCRF.toString();
     }
 
     public static class Builder extends ElementBuilder {

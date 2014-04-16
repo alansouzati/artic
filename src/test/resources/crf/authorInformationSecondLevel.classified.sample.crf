@@ -1,32 +1,32 @@
-Scott 0 0 medium false false false false false false false false  AUTHOR
-Schaefer, 1 0 medium false false false false false false true false  AUTHOR
-Joe 2 0 few false false false false false false false false  AUTHOR
-Warren* 3 0 medium false false false false false false true false  AUTHOR
-Department 0 0 many false false false false false false false false  AFFILIATION
-of 1 0 few false false false false false false false false  AFFILIATION
-Computer 2 0 medium false false false false false false false false  AFFILIATION
-Science, 3 0 medium false false false false false false true false  AFFILIATION
-Rice 4 0 few false false false false false false false false  AFFILIATION
-University, 5 0 many false false false false false false true false  AFFILIATION
-6100 6 0 few false false false true false false false false  AFFILIATION
-South 7 0 medium false false false false false false false false  AFFILIATION
-Main, 8 0 medium false false false false false false true false  AFFILIATION
-Houston, 9 0 medium false false false false false false true false  AFFILIATION
-TX 10 0 few false false false false false false false false  AFFILIATION
-77251-1892, 11 0 many false false false true false false true false  AFFILIATION
-USA 12 0 few false false false false false true false false  AFFILIATION
-Received 0 1 medium false false false false false false false false  OTHER
-4 1 1 few false false false true false false false false  OTHER
-June 2 1 few false false true false false false false false  OTHER
-2003; 3 1 medium false false false true true false true false  OTHER
-received 4 1 medium false false false false false false false false  OTHER
-in 5 1 few false false false false false false false false  OTHER
-revised 6 1 medium false false false false false false false false  OTHER
-form 7 1 few false false false false false false false false  OTHER
-20 8 1 few false false false true false false false false  OTHER
-October 9 1 medium false false true false false false false false  OTHER
-2003; 10 1 medium false false false true true false true false  OTHER
-accepted 11 1 medium false false false false false false false false  OTHER
-20 12 1 few false false false true false false false false  OTHER
-October 13 1 medium false false true false false false false false  OTHER
-2003 14 1 few false false false true true false false false  OTHER
+Scott 0 0 medium false false false new medium false  AUTHOR
+Schaefer, 1 0 medium false false false same medium false  AUTHOR
+Joe 2 0 few false false false same medium false  AUTHOR
+Warren* 3 0 medium false false false same medium false  AUTHOR
+Department 0 0 many false true false new small false  AFFILIATION
+of 1 0 few false false false same small false  AFFILIATION
+Computer 2 0 medium false true false same small false  AFFILIATION
+Science, 3 0 medium false true false same small false  AFFILIATION
+Rice 4 0 few false false false same small false  AFFILIATION
+University, 5 0 many false true false same small false  AFFILIATION
+6100 6 0 few false false false same small false  AFFILIATION
+South 7 0 medium false true false same small false  AFFILIATION
+Main, 8 0 medium false false false same small false  AFFILIATION
+Houston, 9 0 medium false false false same small false  AFFILIATION
+TX 10 0 few false false false same small false  AFFILIATION
+77251-1892, 11 0 many false false false same small false  AFFILIATION
+USA 12 0 few false true false same small false  AFFILIATION
+Received 0 1 medium false false false same small false  OTHER
+4 1 1 few false false false same small false  OTHER
+June 2 1 few false false false same small false  OTHER
+2003; 3 1 medium false false false same small false  OTHER
+received 4 1 medium false false false same small false  OTHER
+in 5 1 few false false false same small false  OTHER
+revised 6 1 medium false false false same small false  OTHER
+form 7 1 few false false false same small false  OTHER
+20 8 1 few false false false same small false  OTHER
+October 9 1 medium false false false same small false  OTHER
+2003; 10 1 medium false false false same small false  OTHER
+accepted 11 1 medium false false false same small false  OTHER
+20 12 1 few false false false same small false  OTHER
+October 13 1 medium false false false same small false  OTHER
+2003 14 1 few false false false same small false  OTHER

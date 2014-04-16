@@ -45,8 +45,8 @@ public class CRFClassifierTest {
 
         assertNotNull(crfLines);
         assertEquals(lines.size(), crfLines.size());
-        assertEquals(LineClass.TITLE.toString(), crfLines.get(0).getLineClass().toString());
-        assertEquals(lines.get(0), crfLines.get(0).getLine());
+        assertEquals(LineClass.TITLE.toString(), crfLines.get(2).getLineClass().toString());
+        assertEquals(lines.get(2), crfLines.get(2).getLine());
 
         StringBuilder crfLinesClassifiedSB = new StringBuilder();
 
@@ -63,7 +63,7 @@ public class CRFClassifierTest {
     @Test
     public void itShouldParseHeaderWordsToCRFWhenProvidingValidCRFLineList() throws OmniPageParserException, IOException {
 
-        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/sampleWithHeader.xml").getFile()).getLines();
+        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/sample.xml").getFile()).getLines();
 
         List<Word> words = new ArrayList<>();
         words.addAll(lines.get(0).getWords());
@@ -80,7 +80,7 @@ public class CRFClassifierTest {
     @Test
     public void itShouldParseAuthorInformationWordsToCRFWhenProvidingValidCRFLineList() throws OmniPageParserException, IOException {
 
-        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/sampleWithHeader.xml").getFile()).getLines();
+        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/sample.xml").getFile()).getLines();
 
         List<Word> words = new ArrayList<>();
         words.addAll(lines.get(3).getWords());
@@ -96,15 +96,37 @@ public class CRFClassifierTest {
     }
 
     @Test
+    public void itShouldParseFootnoteWordsToCRFWhenProvidingValidCRFLineList() throws OmniPageParserException, IOException {
+
+        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/sample.xml").getFile()).getLines();
+
+        List<Word> words = new ArrayList<>();
+        words.addAll(lines.get(38).getWords());
+        words.addAll(lines.get(39).getWords());
+        words.addAll(lines.get(40).getWords());
+        words.addAll(lines.get(41).getWords());
+        words.addAll(lines.get(42).getWords());
+
+        String crfWords = CRFClassifier.getFootnoteCRFWordsAsString(words);
+
+        String expectedFootnoteWords = new String(Files.readAllBytes(Paths.get(getClass().getResource("/crf/footnoteSecondLevel.unclassified.sample.crf").getFile())));
+
+        assertNotNull(crfWords);
+        assertEquals(expectedFootnoteWords, crfWords);
+    }
+
+    @Test
     public void itShouldClassifyWordsWhenProvidingValidCRFLineList() throws OmniPageParserException, CRFClassifierException, IOException {
 
-        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/sampleWithHeader.xml").getFile()).getLines();
+        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/sample.xml").getFile()).getLines();
 
         List<CRFLine> crfLines = CRFClassifier.firstLevelCRF(lines);
 
         Map<LineClass, List<CRFWord>> wordsMapByLineClass = CRFClassifier.secondLevelCRF(crfLines);
 
         assertNotNull(wordsMapByLineClass);
+
+        //HEADER VALIDATION
         List<CRFWord> headerWords = wordsMapByLineClass.get(LineClass.HEADER);
         assertNotNull(headerWords);
         assertEquals(6, headerWords.size());
@@ -122,6 +144,7 @@ public class CRFClassifierTest {
 
         assertEquals(expectedHeaderCRFWords, headerCRFWordsClassified);
 
+        //AUTHOR VALIDATION
         List<CRFWord> authorInformationWords = wordsMapByLineClass.get(LineClass.AUTHOR_INFORMATION);
         assertNotNull(authorInformationWords);
         assertEquals(32, authorInformationWords.size());
@@ -131,13 +154,31 @@ public class CRFClassifierTest {
         StringBuilder authorInformationCRFClassifiedSB = new StringBuilder();
 
         for (CRFWord crfWord : authorInformationWords) {
-            authorInformationCRFClassifiedSB.append(crfWord.toHeaderCRF()).append("\n");
+            authorInformationCRFClassifiedSB.append(crfWord.toAuthorInformationCRF()).append("\n");
         }
 
         String authorInformationCRFWordsClassified = authorInformationCRFClassifiedSB.toString();
         String expectedAuthorInformationCRFWords = new String(Files.readAllBytes(Paths.get(getClass().getResource("/crf/authorInformationSecondLevel.classified.sample.crf").getFile())));
 
         assertEquals(expectedAuthorInformationCRFWords, authorInformationCRFWordsClassified);
+
+        //FOOTNOTE VALIDATION
+        List<CRFWord> footnoteWords = wordsMapByLineClass.get(LineClass.FOOTNOTE);
+        assertNotNull(footnoteWords);
+        assertEquals(28, footnoteWords.size());
+        assertEquals(WordClass.OTHER, footnoteWords.get(0).getWordClass());
+        assertEquals(crfLines.get(38).getLine().getWords().get(0), footnoteWords.get(0).getWord());
+
+        StringBuilder footnoteCRFClassifiedSB = new StringBuilder();
+
+        for (CRFWord crfWord : footnoteWords) {
+            footnoteCRFClassifiedSB.append(crfWord.toFootnoteCRF()).append("\n");
+        }
+
+        String footnoteCRFWordsClassified = footnoteCRFClassifiedSB.toString();
+        String expectedFootnoteCRFWords = new String(Files.readAllBytes(Paths.get(getClass().getResource("/crf/footnoteSecondLevel.classified.sample.crf").getFile())));
+
+        assertEquals(expectedFootnoteCRFWords, footnoteCRFWordsClassified);
     }
 
 }

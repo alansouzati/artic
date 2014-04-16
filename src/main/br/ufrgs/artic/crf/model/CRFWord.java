@@ -31,4 +31,20 @@ public class CRFWord {
 
         return crfLineSB.toString();
     }
+
+    public String toAuthorInformationCRF() {
+        StringBuilder crfLineSB = new StringBuilder();
+        crfLineSB.append(word.toAuthorInformationCRF()).append(" ");
+        crfLineSB.append(wordClass.toString());
+
+        return crfLineSB.toString();
+    }
+
+    public String toFootnoteCRF() {
+        StringBuilder crfLineSB = new StringBuilder();
+        crfLineSB.append(word.toFootnoteCRF()).append(" ");
+        crfLineSB.append(wordClass.toString());
+
+        return crfLineSB.toString();
+    }
 }
