@@ -1,0 +1,29 @@
+{
+    "title": "An example of a fake paper",
+    "authors": [
+        {
+            "name": "Alan Souza",
+            "affiliation": "UFRGS",
+            "email": "apsouza@inf.ufrgs.br"
+        },
+        {
+            "name": "Viviane Moreira",
+            "affiliation": "UFRGS",
+            "email": "viviane@inf.ufrgs.br"
+        },
+        {
+            "name": "Carlos Heuser",
+            "affiliation": "UFRGS",
+            "email": "heuser@inf.ufrgs.br"
+        }
+    ],
+    "venues": [
+        {
+            "name": "DocEng",
+            "publisher": "ACM",
+            "date": "September 14-20",
+            "year": "2014",
+            "location": "Fort Collins, USA"
+        }
+    ]
+}
