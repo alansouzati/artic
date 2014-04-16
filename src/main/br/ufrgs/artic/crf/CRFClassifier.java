@@ -30,7 +30,7 @@ public final class CRFClassifier {
     }
 
     /**
-     * This method takes a list of unclassified lines and firstLevelCRF them using conditional random fields
+     * This method takes a list of unclassified lines and classify them using conditional random fields
      *
      * @param lines unclassified lines to be used by the CRF engine
      * @return the list of classified lines after the CRF execution
@@ -65,7 +65,7 @@ public final class CRFClassifier {
             }
         } catch (InterruptedException | IOException e) {
             LOGGER.error("Problem when classifying the paper lines. ", e);
-            throw new CRFClassifierException("An unexpected problem occurred trying to firstLevelCRF the paper lines.", e);
+            throw new CRFClassifierException("An unexpected problem occurred trying to classify the paper lines.", e);
         }
 
         return crfLines;
@@ -242,8 +242,8 @@ public final class CRFClassifier {
 
             }
         } catch (InterruptedException | IOException e) {
-            LOGGER.error("Problem when classifying the paper lines. ", e);
-            throw new CRFClassifierException("An unexpected problem occurred trying to firstLevelCRF the paper lines.", e);
+            LOGGER.error(String.format("Problem when classifying the paper words for the following model %s. ", model), e);
+            throw new CRFClassifierException(String.format("An unexpected problem occurred trying to run the CRF for the following model %s.", model), e);
         }
         return classifiedWords;
     }
