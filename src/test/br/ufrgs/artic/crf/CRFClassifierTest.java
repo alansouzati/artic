@@ -41,7 +41,7 @@ public class CRFClassifierTest {
 
         List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/sample.xml").getFile()).getLines();
 
-        List<CRFLine> crfLines = CRFClassifier.firstLevelCRF(lines);
+        List<CRFLine> crfLines = CRFClassifier.classifyFirstLevelCRF(lines);
 
         assertNotNull(crfLines);
         assertEquals(lines.size(), crfLines.size());
@@ -120,9 +120,9 @@ public class CRFClassifierTest {
 
         List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/sample.xml").getFile()).getLines();
 
-        List<CRFLine> crfLines = CRFClassifier.firstLevelCRF(lines);
+        List<CRFLine> crfLines = CRFClassifier.classifyFirstLevelCRF(lines);
 
-        Map<LineClass, List<CRFWord>> wordsMapByLineClass = CRFClassifier.secondLevelCRF(crfLines);
+        Map<LineClass, List<CRFWord>> wordsMapByLineClass = CRFClassifier.classifySecondLevelCRF(crfLines);
 
         assertNotNull(wordsMapByLineClass);
 

@@ -35,7 +35,7 @@ public final class CRFClassifier {
      * @param lines unclassified lines to be used by the CRF engine
      * @return the list of classified lines after the CRF execution
      */
-    public static List<CRFLine> firstLevelCRF(List<Line> lines) throws CRFClassifierException {
+    public static List<CRFLine> classifyFirstLevelCRF(List<Line> lines) throws CRFClassifierException {
 
         if (lines == null) {
             throw new IllegalArgumentException("Line is a required attribute.");
@@ -78,7 +78,7 @@ public final class CRFClassifier {
      * @param crfLines all the classified CRF lines used to build the CRF words map.
      * @return the map of all classified words by line class (this map will contain only the Line classes that requires a second level)
      */
-    public static Map<LineClass, List<CRFWord>> secondLevelCRF(List<CRFLine> crfLines) throws CRFClassifierException {
+    public static Map<LineClass, List<CRFWord>> classifySecondLevelCRF(List<CRFLine> crfLines) throws CRFClassifierException {
 
         Map<LineClass, List<Word>> wordsMapByLineClass = getWordsMapByLineClass(crfLines);
 
@@ -87,6 +87,9 @@ public final class CRFClassifier {
             switch (lineClass) {
                 case HEADER:
                     crfWords.put(lineClass, classifyHeader(wordsMapByLineClass.get(lineClass)));
+                    break;
+                case TITLE:
+                    crfWords.put(lineClass, classifyTitle(wordsMapByLineClass.get(lineClass)));
                     break;
                 case AUTHOR_INFORMATION:
                     crfWords.put(lineClass, classifyAuthorInformation(wordsMapByLineClass.get(lineClass)));
@@ -174,6 +177,20 @@ public final class CRFClassifier {
         }
 
         return getCRFWords(words, getAuthorInformationCRFWordsAsString(words), "/crf/models/authorInformationSecondLevel.crf");
+    }
+
+    private static List<CRFWord> classifyTitle(List<Word> words) throws CRFClassifierException {
+        if (words == null) {
+            throw new IllegalArgumentException("Words is a required attribute.");
+        }
+
+        List<CRFWord> classifiedWords = new ArrayList<>();
+
+        for (Word word : words) {
+            classifiedWords.add(new CRFWord(word, WordClass.TITLE));
+        }
+
+        return classifiedWords;
     }
 
     private static List<CRFWord> classifyFootnote(List<Word> words) throws CRFClassifierException {
