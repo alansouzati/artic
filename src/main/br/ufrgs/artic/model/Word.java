@@ -10,6 +10,7 @@ public class Word extends Element {
 
     private final Word previousWord;
     private final Line line;
+    private final int lineIndex;
 
     public Word(Builder builder) {
         super(builder);
@@ -17,6 +18,7 @@ public class Word extends Element {
         previousWord = builder.previousWord;
         content = builder.content;
         line = builder.line;
+        lineIndex = builder.lineIndex;
     }
 
     public Word getPreviousWord() {
@@ -130,7 +132,7 @@ public class Word extends Element {
 
         authorInformationWordCRF.append(getContentNoSpace().replaceAll("\\n", "").replaceAll(" ", "")).append(" ");
         authorInformationWordCRF.append(index).append(" ");
-        authorInformationWordCRF.append(line.getIndex()).append(" ");
+        authorInformationWordCRF.append(lineIndex).append(" ");
         authorInformationWordCRF.append(getCharacterSize()).append(" ");
         authorInformationWordCRF.append(isPossibleEmail()).append(" ");
         authorInformationWordCRF.append(!isPossibleEmail() && isPossibleAffiliation()).append(" ");
@@ -147,7 +149,7 @@ public class Word extends Element {
 
         headerWordCRF.append(getContentNoSpace().replaceAll("\\n", "").replaceAll(" ", "")).append(" ");
         headerWordCRF.append(index).append(" ");
-        headerWordCRF.append(line.getIndex()).append(" ");
+        headerWordCRF.append(lineIndex).append(" ");
         headerWordCRF.append(getCharacterSize()).append(" ");
         headerWordCRF.append(isNumeral()).append(" ");
         headerWordCRF.append(isPossibleConference()).append(" ");
@@ -169,6 +171,7 @@ public class Word extends Element {
         //optional params
         private Word previousWord = null;
         private Line line = null;
+        private int lineIndex = 0;
 
         public Builder(int index, String content) {
 
@@ -223,6 +226,11 @@ public class Word extends Element {
 
         public Builder line(Line line) {
             this.line = line;
+            return this;
+        }
+
+        public Builder lineIndex(int lineIndex) {
+            this.lineIndex = lineIndex;
             return this;
         }
 

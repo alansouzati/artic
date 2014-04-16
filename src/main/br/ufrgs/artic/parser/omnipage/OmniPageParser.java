@@ -84,6 +84,7 @@ public class OmniPageParser implements PageParser {
                 List<Element> linesOfParagraph = getElementsByTagName("ln", paragraphElement);
 
                 if (linesOfParagraph != null && !linesOfParagraph.isEmpty()) {
+                    int currentLineIndex = 0;
                     for (Element lineElement : linesOfParagraph) {
 
                         String lineContent = getOriginalText(lineElement);
@@ -104,7 +105,7 @@ public class OmniPageParser implements PageParser {
                         for (Element wordElement : words) {
 
                             Word word = getWord(page, previousWord, paragraphElement,
-                                    line, currentWordIndex, wordElement);
+                                    line, currentWordIndex, currentLineIndex, wordElement);
 
                             line.getWords().add(word);
                             previousWord = word;
@@ -115,6 +116,7 @@ public class OmniPageParser implements PageParser {
                         paragraph = Paragraph.SAME;
                         previousLine = line;
                         lineCounter++;
+                        currentLineIndex++;
                     }
                 }
             }
@@ -123,7 +125,7 @@ public class OmniPageParser implements PageParser {
         return lines;
     }
 
-    private Word getWord(Page page, Word previousWord, Element paragraphElement, Line line, int currentWordIndex, Element wordElement) {
+    private Word getWord(Page page, Word previousWord, Element paragraphElement, Line line, int currentWordIndex, int currentLineIndex, Element wordElement) {
         int topNormalized = 0;
         int leftNormalized = 0;
         if (wordElement.getAttribute("t") != null && !wordElement.getAttribute("t").isEmpty() &&
@@ -159,7 +161,7 @@ public class OmniPageParser implements PageParser {
                 getBooleanValue(wordElement.getAttribute("underlined"), "none") : line.getUnderline();
 
         return new Word.Builder(currentWordIndex, wordContent)
-                .previousWord(previousWord).line(line)
+                .previousWord(previousWord).line(line).lineIndex(currentLineIndex)
                 .alignment(Alignment.get(paragraphElement.getAttribute("alignment")))
                 .bold(bold)
                 .italic(italic)
