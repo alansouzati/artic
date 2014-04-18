@@ -23,8 +23,8 @@ public class OmniPageParserTest {
         assertEquals(FontSize.BIG, titleLine.getFontSize());
         assertEquals(Alignment.CENTERED, titleLine.getAlignment());
         assertEquals(Paragraph.HEADER, titleLine.getParagraph());
-        assertEquals(2, titleLine.getLeft());
-        assertEquals(2, titleLine.getTop());
+        assertEquals(2, titleLine.getLeftNormalized());
+        assertEquals(2, titleLine.getTopNormalized());
         assertEquals(2, titleLine.getIndex());
         assertEquals(6, titleLine.getWords().size());
 
@@ -40,5 +40,8 @@ public class OmniPageParserTest {
         assertEquals(firstWord, secondWord.getPreviousWord());
 
         assertNotNull(titleLine.getPreviousLine());
+
+        assertEquals(248, validLines.get(0).getWords().get(0).getContext().getWords().size());
+        assertEquals(16, validLines.get(66).getWords().get(0).getContext().getWords().size());
     }
 }

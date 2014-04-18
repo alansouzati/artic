@@ -37,10 +37,10 @@ public class LineTest {
     public void itShouldCreateLineWhenOptionalParamsProvided() {
 
         ArrayList<Word> words = new ArrayList<>();
-        words.add(new Word.Builder(0, "Testing").build());
-        words.add(new Word.Builder(1, "Testing").build());
+        words.add(new Word.Builder(0, "Testing", new Context()).build());
+        words.add(new Word.Builder(1, "Testing", new Context()).build());
 
-        Line previousLine = new Line.Builder(0, new Page(0.00, 0, 0)).addWord(new Word.Builder(0, "Testing").build()).build();
+        Line previousLine = new Line.Builder(0, new Page(0.00, 0, 0)).addWord(new Word.Builder(0, "Testing", new Context()).build()).build();
 
         Line validLine = new Line.Builder(0, new Page(18.00, 1, 1)).addAllWords(words).alignment(Alignment.CENTERED)
                 .fontFace("Times New Roman").fontSize(FontSize.BIG).bold(true)
@@ -52,8 +52,8 @@ public class LineTest {
         assertEquals(18.00, validLine.getPage().getAverageFontSize(), 2);
         assertEquals(1, validLine.getPage().getTop());
         assertEquals(1, validLine.getPage().getLeft());
-        assertEquals(0, validLine.getTop());
-        assertEquals(0, validLine.getLeft());
+        assertEquals(0, validLine.getTopNormalized());
+        assertEquals(0, validLine.getLeftNormalized());
         assertEquals(2, validLine.getWords().size());
         assertEquals("Testing Testing", validLine.getContent());
 

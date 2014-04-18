@@ -8,6 +8,7 @@ import br.ufrgs.artic.exceptions.CRFClassifierException;
 import br.ufrgs.artic.exceptions.OmniPageParserException;
 import br.ufrgs.artic.model.Line;
 import br.ufrgs.artic.output.model.Paper;
+import br.ufrgs.artic.output.model.PaperBoundary;
 import br.ufrgs.artic.parser.omnipage.OmniPageParser;
 import org.json.JSONException;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class PaperHandlerTest {
 
         Map<LineClass, List<CRFWord>> wordsMapByLineClass = CRFClassifier.classifySecondLevelCRF(crfLines);
 
-        Paper paper = PaperHandler.getPaper(wordsMapByLineClass);
+        Paper paper = new PaperHandler(new PaperBoundary()).getPaper(wordsMapByLineClass);
 
         String expectedPaperJSON = new String(Files.readAllBytes(Paths.get(getClass().getResource("/output/sample.json").getFile())));
 

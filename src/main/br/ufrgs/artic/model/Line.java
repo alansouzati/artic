@@ -73,14 +73,14 @@ public class Line extends Element {
     public String toCRF() {
         StringBuilder lineCRF = new StringBuilder();
 
-        lineCRF.append("line_" + index).append(" ");
+        lineCRF.append("line_").append(index).append(" ");
         lineCRF.append(alignment.toString().toLowerCase()).append(" ");
         lineCRF.append(isBold()).append(" ");
         lineCRF.append(isUnderline()).append(" ");
         lineCRF.append(isItalic()).append(" ");
         lineCRF.append(getFontSize().toString().toLowerCase()).append(" ");
-        lineCRF.append(top).append(" ");
-        lineCRF.append(left).append(" ");
+        lineCRF.append(getTopNormalized()).append(" ");
+        lineCRF.append(getLeftNormalized()).append(" ");
         lineCRF.append(getContent().contains("@")).append(" ");
         lineCRF.append(getLineSize()).append(" ");
         lineCRF.append(paragraph.toString().toLowerCase()).append(" ");
@@ -116,6 +116,14 @@ public class Line extends Element {
             characterSize = "many";
         }
         return characterSize;
+    }
+
+    public int getTopNormalized() {
+        return top / page.getTop();
+    }
+
+    public int getLeftNormalized() {
+        return left / page.getLeft();
     }
 
     public static class Builder extends ElementBuilder {
@@ -162,6 +170,16 @@ public class Line extends Element {
 
         public Builder left(int left) {
             this.left = left;
+            return this;
+        }
+
+        public Builder right(int right) {
+            this.right = right;
+            return this;
+        }
+
+        public Builder bottom(int bottom) {
+            this.bottom = bottom;
             return this;
         }
 

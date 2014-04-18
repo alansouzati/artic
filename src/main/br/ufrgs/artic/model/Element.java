@@ -15,6 +15,8 @@ public abstract class Element {
     protected final boolean underline;
     protected final int left;
     protected final int top;
+    protected final int right;
+    protected final int bottom;
 
     protected Element(ElementBuilder builder) {
         index = builder.index;
@@ -27,6 +29,8 @@ public abstract class Element {
         underline = builder.underline;
         left = builder.left;
         top = builder.top;
+        right = builder.right;
+        bottom = builder.bottom;
     }
 
     public Alignment getAlignment() {
@@ -82,6 +86,14 @@ public abstract class Element {
         return underline;
     }
 
+    public int getRight() {
+        return right;
+    }
+
+    public int getBottom() {
+        return bottom;
+    }
+
     private String contentNoSpace;
     private String contentNoSpecialCharacter;
 
@@ -116,6 +128,8 @@ public abstract class Element {
         protected FontSize fontSize = FontSize.NORMAL;
         protected int left = 0;
         protected int top = 0;
+        protected int right = 0;
+        protected int bottom = 0;
 
         public ElementBuilder(int index) {
             this.index = index;

@@ -13,6 +13,9 @@ public class Word extends Element {
     private final Word previousWord;
     private final Line line;
     private final int lineIndex;
+    private Context context;
+    private int biggestLineSpacing;
+    private int smallestLineSpacing;
 
     public Word(Builder builder) {
         super(builder);
@@ -21,6 +24,7 @@ public class Word extends Element {
         content = builder.content;
         line = builder.line;
         lineIndex = builder.lineIndex;
+        context = builder.context;
     }
 
     public Word getPreviousWord() {
@@ -231,17 +235,65 @@ public class Word extends Element {
         return footnoteWordCRF.toString();
     }
 
+    public int getBiggestLineSpacing() {
+
+        if (biggestLineSpacing == 0) {
+            int previousRight = 0;
+            for (Word currentWord : context.getWords()) {
+                int right = currentWord.getRight();
+                if (previousRight > 0) {
+
+                    int left = currentWord.getLeft();
+
+                    long currentDifference = left - previousRight;
+                    if (currentDifference > 0 && currentDifference > biggestLineSpacing) {
+                        biggestLineSpacing = (int) currentDifference;
+                    }
+                }
+
+                previousRight = right;
+            }
+        }
+        return biggestLineSpacing;
+    }
+
+    public int getSmallestLineSpacing() {
+        if (smallestLineSpacing == 9999999) {
+            int previousRight = 0;
+            for (Word currentWord : context.getWords()) {
+                int right = currentWord.getRight();
+                if (previousRight > 0) {
+
+                    int left = currentWord.getLeft();
+
+                    long currentDifference = left - previousRight;
+                    if (currentDifference > 0 && currentDifference < smallestLineSpacing) {
+                        smallestLineSpacing = (int) currentDifference;
+                    }
+                }
+
+                previousRight = right;
+            }
+        }
+        return smallestLineSpacing;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
     public static class Builder extends ElementBuilder {
 
         //required params
         private final String content;
+        private final Context context;
 
         //optional params
         private Word previousWord = null;
         private Line line = null;
         private int lineIndex = 0;
 
-        public Builder(int index, String content) {
+        public Builder(int index, String content, Context context) {
 
             super(index);
 
@@ -249,7 +301,12 @@ public class Word extends Element {
                 throw new IllegalArgumentException("Please provide a content for the word.");
             }
 
+            if (context == null) {
+                throw new IllegalArgumentException("Please provide the context of this word.");
+            }
+
             this.content = content;
+            this.context = context;
         }
 
         public Builder bold(boolean bold) {
@@ -312,8 +369,21 @@ public class Word extends Element {
             return this;
         }
 
+        public Builder right(int right) {
+            this.right = right;
+            return this;
+        }
+
+        public Builder bottom(int bottom) {
+            this.bottom = bottom;
+            return this;
+        }
+
         public Word build() {
-            return new Word(this);
+            Word word = new Word(this);
+            word.context.addWord(word);
+            return word;
+
         }
     }
 }

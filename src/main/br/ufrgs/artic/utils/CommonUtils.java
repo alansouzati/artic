@@ -39,6 +39,7 @@ public final class CommonUtils {
     public static final Pattern PUBLISHER_PATTERN = Pattern.compile("acm|elsevier|ieee|springer-verlag|springer");
     public static final Pattern ISSN_PATTERN = Pattern.compile("(\\d\\d\\d\\d)(-|–)(\\d\\d\\d\\d)[/|$]*(,|\\.|;)?");
     public static final Pattern DOI_PATTERN = Pattern.compile("(doi:)?(\\d\\d\\.\\d\\d\\d\\d)/[[A-Za-z0-9]+\\.]+");
+    public static final Pattern SEPARATOR_SIMPLE_PATTERN = Pattern.compile(",|;");
     public static final List<String> MONTH_LIST;
     public static final List<String> COUNTRY_LIST;
     public static final List<String> CONFERENCE_LIST;

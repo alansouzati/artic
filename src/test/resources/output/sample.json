@@ -1,5 +1,15 @@
 {
     "title": "Teaching computer game design and construction",
+    "authors": [
+        {
+            "name": "Scott Schaefer",
+            "email": "sschaefe@rice.edu"
+        },
+        {
+            "name": "Joe Warren",
+            "email": "jwarren@cs.rice.edu"
+        }
+    ],
     "venues": [
         {
             "name": "Computer-Aided Design",

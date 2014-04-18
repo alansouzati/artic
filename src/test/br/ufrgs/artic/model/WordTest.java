@@ -9,7 +9,7 @@ public class WordTest {
     @Test
     public void itShouldCreateWordWhenRequiredParamsProvided() {
 
-        Word validWord = new Word.Builder(0, "Testing").build();
+        Word validWord = new Word.Builder(0, "Testing", new Context()).build();
 
         assertNotNull(validWord);
         //line tests for required params
@@ -29,10 +29,10 @@ public class WordTest {
     @Test
     public void itShouldCreateWordWhenOptionalParamsProvided() {
 
-        Word previousWord = new Word.Builder(0, "Testing").build();
+        Word previousWord = new Word.Builder(0, "Testing", new Context()).build();
         Line line = new Line.Builder(0, new Page(0, 0, 0)).build();
 
-        Word validWord = new Word.Builder(0, "Testing 2").alignment(Alignment.CENTERED)
+        Word validWord = new Word.Builder(0, "Testing 2", new Context()).alignment(Alignment.CENTERED)
                 .fontFace("Times New Roman").fontSize(FontSize.BIG).bold(true)
                 .italic(true).underline(true).previousWord(previousWord).line(line).build();
 
@@ -59,7 +59,7 @@ public class WordTest {
     public void itShouldFailToCreateWordWhenNoContentProvided() {
 
         try {
-            new Word.Builder(0, null);
+            new Word.Builder(0, null, null);
             fail("Cannot create a word without content.");
         } catch (IllegalArgumentException e) {
             assertEquals("Please provide a content for the word.", e.getMessage());

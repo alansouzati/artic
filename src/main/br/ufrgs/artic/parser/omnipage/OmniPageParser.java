@@ -69,15 +69,26 @@ public class OmniPageParser implements PageParser {
     private List<Line> getLinesOfPage(Page page) {
         List<Line> lines = new ArrayList<>();
 
+
+        List<Element> sections = getElementsByTagName("section", pageAsXML.getDocumentElement());
+
         List<Element> paragraphs = getElementsByTagName("para", pageAsXML.getDocumentElement());
 
         Integer lineCounter = 0;
         Boolean foundIntroOrAbstract = false;
         Line previousLine = null;
         Word previousWord = null;
+
+        Context context = null;
+        Element currentContext = sections.get(0);
         if (paragraphs != null && !paragraphs.isEmpty()) {
 
             for (Element paragraphElement : paragraphs) {
+
+                List<Element> sectionParagraphs = getElementsByTagName("para", currentContext);
+                if (context == null || !sectionParagraphs.contains(paragraphElement)) {
+                    context = new Context();
+                }
 
                 Paragraph paragraph = Paragraph.NEW;
 
@@ -104,8 +115,8 @@ public class OmniPageParser implements PageParser {
 
                         for (Element wordElement : words) {
 
-                            Word word = getWord(page, previousWord, paragraphElement,
-                                    line, currentWordIndex, currentLineIndex, wordElement);
+                            Word word = getWord(page, previousWord, paragraphElement.getAttribute("alignment"),
+                                    line, currentWordIndex, currentLineIndex, wordElement, context);
 
                             line.getWords().add(word);
                             previousWord = word;
@@ -125,19 +136,7 @@ public class OmniPageParser implements PageParser {
         return lines;
     }
 
-    private Word getWord(Page page, Word previousWord, Element paragraphElement, Line line, int currentWordIndex, int currentLineIndex, Element wordElement) {
-        int topNormalized = 0;
-        int leftNormalized = 0;
-        if (wordElement.getAttribute("t") != null && !wordElement.getAttribute("t").isEmpty() &&
-                wordElement.getAttribute("l") != null && !wordElement.getAttribute("l").isEmpty()) {
-
-            int top = Integer.parseInt(wordElement.getAttribute("t").replaceAll(",", "\\."));
-            topNormalized = top / page.getTop();
-
-            int left = Integer.parseInt(wordElement.getAttribute("l").replaceAll(",", "\\."));
-            leftNormalized = left / page.getLeft();
-
-        }
+    private Word getWord(Page page, Word previousWord, String alignment, Line line, int currentWordIndex, int currentLineIndex, Element wordElement, Context context) {
 
         String wordContent = getOriginalText(wordElement);
 
@@ -160,34 +159,23 @@ public class OmniPageParser implements PageParser {
                 !wordElement.getAttribute("underlined").isEmpty()) ?
                 getBooleanValue(wordElement.getAttribute("underlined"), "none") : line.getUnderline();
 
-        return new Word.Builder(currentWordIndex, wordContent)
+        return new Word.Builder(currentWordIndex, wordContent, context)
                 .previousWord(previousWord).line(line).lineIndex(currentLineIndex)
-                .alignment(Alignment.get(paragraphElement.getAttribute("alignment")))
+                .alignment(Alignment.get(alignment))
                 .bold(bold)
                 .italic(italic)
                 .underline(underline)
                 .fontSize(fontSize)
                 .fontFace(fontFace)
-                .left(leftNormalized)
-                .top(topNormalized).build();
+                .left(Integer.parseInt(wordElement.getAttribute("l")))
+                .top(Integer.parseInt(wordElement.getAttribute("t")))
+                .right(Integer.parseInt(wordElement.getAttribute("r")))
+                .bottom(Integer.parseInt(wordElement.getAttribute("b"))).build();
     }
 
     private Line getLine(Page page, Integer lineCounter, Boolean foundIntroOrAbstract,
                          Line previousLine, Element paragraphElement, Paragraph paragraph,
                          Element lineElement, String textContent) {
-        int topNormalized = 0;
-        int leftNormalized = 0;
-        if (lineElement.getAttribute("t") != null && !lineElement.getAttribute("t").isEmpty() &&
-                lineElement.getAttribute("l") != null && !lineElement.getAttribute("l").isEmpty()) {
-
-            int top = Integer.parseInt(lineElement.getAttribute("t").replaceAll(",", "\\."));
-            topNormalized = top / page.getTop();
-
-            int left = Integer.parseInt(lineElement.getAttribute("l").replaceAll(",", "\\."));
-            leftNormalized = left / page.getLeft();
-
-        }
-
         Line.Builder lineBuilder = new Line.Builder(lineCounter, page)
                 .alignment(Alignment.get(paragraphElement.getAttribute("alignment")))
                 .previousLine(previousLine)
@@ -197,8 +185,10 @@ public class OmniPageParser implements PageParser {
                 .underline(getBooleanValue(lineElement.getAttribute("underlined"), "none"))
                 .fontSize(getFontSize(lineElement, page.getAverageFontSize()))
                 .fontFace(lineElement.getAttribute("fontFace"))
-                .left(leftNormalized)
-                .top(topNormalized);
+                .left(Integer.parseInt(lineElement.getAttribute("l")))
+                .top(Integer.parseInt(lineElement.getAttribute("t")))
+                .right(Integer.parseInt(lineElement.getAttribute("r")))
+                .bottom(Integer.parseInt(lineElement.getAttribute("b")));
 
 
         if (!foundIntroOrAbstract) {  //special case for headers

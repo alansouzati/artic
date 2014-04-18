@@ -10,7 +10,12 @@ public class Author {
     private String email;
 
     public Author(String name) {
-        this.name = name;
+
+        if (name == null) {
+            throw new IllegalArgumentException("Author name is a required parameter");
+        }
+
+        this.name = name.replaceAll("[,:;0-9\\*\\(\\)\\[\\]\\{\\}]", "").trim();
     }
 
     public Author affiliation(String affiliation) {
@@ -21,5 +26,9 @@ public class Author {
     public Author email(String email) {
         this.email = email;
         return this;
+    }
+
+    public String getName() {
+        return name;
     }
 }
