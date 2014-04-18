@@ -37,6 +37,6 @@ public class PaperHandlerTest {
 
         String generatedPaperJSON = paper.toJSON();
 
-        assertEquals(expectedPaperJSON, generatedPaperJSON, false);
+        assertEquals(expectedPaperJSON, generatedPaperJSON, true);
     }
 }

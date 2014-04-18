@@ -12,8 +12,8 @@ import java.util.List;
 public class Paper {
 
     private final String title;
-    private final List<Author> authors = new ArrayList<>();
-    private final List<Venue> venues = new ArrayList<>();
+    private List<Author> authors;
+    private List<Venue> venues;
 
     private static final Gson parser = new GsonBuilder().setPrettyPrinting().create();
 
@@ -23,6 +23,10 @@ public class Paper {
 
     public Paper addAuthor(Author author) {
         if (author != null) {
+            if (this.authors == null) {
+                this.authors = new ArrayList<>();
+            }
+
             authors.add(author);
         }
 
@@ -31,6 +35,11 @@ public class Paper {
 
     public Paper addAuthors(List<Author> authors) {
         if (authors != null) {
+
+            if (this.authors == null) {
+                this.authors = new ArrayList<>();
+            }
+
             this.authors.addAll(authors);
         }
 
@@ -39,6 +48,11 @@ public class Paper {
 
     public Paper addVenue(Venue venue) {
         if (venue != null) {
+
+            if (venues == null) {
+                this.venues = new ArrayList<>();
+            }
+
             venues.add(venue);
         }
 
@@ -47,5 +61,17 @@ public class Paper {
 
     public String toJSON() {
         return parser.toJson(this);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public List<Author> getAuthors() {
+        return authors;
+    }
+
+    public List<Venue> getVenues() {
+        return venues;
     }
 }
