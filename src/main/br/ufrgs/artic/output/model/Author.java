@@ -19,12 +19,20 @@ public class Author {
     }
 
     public Author affiliation(String affiliation) {
-        this.affiliation = affiliation;
+
+        if (this.affiliation == null && affiliation != null && !affiliation.isEmpty()) {
+            this.affiliation = "";
+        }
+
+        this.affiliation += affiliation;
         return this;
     }
 
     public Author email(String email) {
-        this.email = email;
+        if (email != null && !email.isEmpty()) {
+            this.email = email;
+        }
+
         return this;
     }
 

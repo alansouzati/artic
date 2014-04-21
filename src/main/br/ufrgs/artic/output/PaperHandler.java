@@ -112,14 +112,57 @@ public final class PaperHandler {
     private List<Author> getAuthors(List<CRFWord> crfWords) {
 
         List<CRFWord> authorWordList = new ArrayList<>();
+        List<CRFWord> affiliationWordList = new ArrayList<>();
         for (CRFWord crfWord : crfWords) {
             if (WordClass.AUTHOR.equals(crfWord.getWordClass())) {
                 authorWordList.add(crfWord);
+            } else if (WordClass.AFFILIATION.equals(crfWord.getWordClass())) {
+                affiliationWordList.add(crfWord);
             }
         }
 
-        TreeMap<Integer, EntityGroup> authorsMap = entityGrouping(authorWordList, paperBoundary.getHorizontalAuthor(), paperBoundary.getVerticalAuthor());
+        TreeMap<Integer, EntityGroup> authorsMap = entityGrouping(authorWordList,
+                paperBoundary.getHorizontalAuthor(), paperBoundary.getVerticalAuthor());
 
+
+        List<Author> authors = getAuthors(authorsMap);
+
+        addAffiliations(affiliationWordList, authorsMap, authors);
+
+        return authors;
+    }
+
+    private void addAffiliations(List<CRFWord> affiliationWordList, TreeMap<Integer, EntityGroup> authorsMap, List<Author> authors) {
+        TreeMap<Integer, EntityGroup> affiliationsMap = entityGrouping(affiliationWordList,
+                paperBoundary.getHorizontalAffiliation(), paperBoundary.getVerticalAffiliation());
+
+        if (affiliationsMap.size() == 1) {
+            for (Author author : authors) {
+                author.affiliation(affiliationsMap.get(0).getText());
+            }
+        } else {
+            for (Map.Entry<Integer, EntityGroup> currentAuthorEntry : authorsMap.entrySet()) {
+
+                EntityGroup authorEntityGroup = currentAuthorEntry.getValue();
+                Integer affiliationIndex = getGroupIndex(affiliationsMap.descendingMap(), authorEntityGroup,
+                        paperBoundary.getHorizontalAuthorAffiliation(), paperBoundary.getVerticalAuthorAffiliation(), false);
+
+                if (affiliationIndex != null) {
+                    String affiliationText = affiliationsMap.get(affiliationIndex).getText();
+
+                    String authorNames = currentAuthorEntry.getValue().getText();
+                    for (Author author : authors) {
+                        if (authorNames.contains(author.getName())) {
+                            author.affiliation(affiliationText);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private List<Author> getAuthors(TreeMap<Integer, EntityGroup> authorsMap) {
         List<Author> authors = new ArrayList<>();
         for (Map.Entry<Integer, EntityGroup> currentAuthorEntry : authorsMap.entrySet()) {
 
@@ -148,7 +191,6 @@ public final class PaperHandler {
             }
 
         }
-
         return authors;
     }
 

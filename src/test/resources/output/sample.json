@@ -3,10 +3,12 @@
     "authors": [
         {
             "name": "Scott Schaefer",
+            "affiliation": "Department of Computer Science, Rice University, 6100 South Main, Houston, TX 77251-1892, USA",
             "email": "sschaefe@rice.edu"
         },
         {
             "name": "Joe Warren",
+            "affiliation": "Department of Computer Science, Rice University, 6100 South Main, Houston, TX 77251-1892, USA",
             "email": "jwarren@cs.rice.edu"
         }
     ],
