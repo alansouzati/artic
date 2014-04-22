@@ -14,7 +14,7 @@ public class OmniPageParserTest {
     @Test
     public void itShouldCreateLinesWithValidXMLProvided() throws OmniPageParserException {
 
-        List<Line> validLines = new OmniPageParser(getClass().getResource("/omnipage/sample.xml").getFile()).getLines();
+        List<Line> validLines = new OmniPageParser(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
 
         assertNotNull(validLines);
 

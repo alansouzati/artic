@@ -6,7 +6,7 @@ Tel.: 3 0 medium false false false false false false false false false false fal
 fax: 5 0 few false false false false false false false false false false false false false  OTHER
 þ1-713-348-5930. 6 0 many false false false false false false false false false true false false false  OTHER
 E-mail 0 1 medium false false false false false false false false true false false false false  EMAIL
-addresses: 1 1 many false false false false false false false false false false false false false  EMAIL
+addresses: 1 1 many false false false false false false false false false false false false false  OTHER
 jwarren@cs.rice.edu 2 1 many false false false false false false false false true false false false false  EMAIL
 (J. 3 1 few false false false false false false false false false false false false false  OTHER
 Warren); 4 1 medium false false false false false false false false false false false false false  OTHER

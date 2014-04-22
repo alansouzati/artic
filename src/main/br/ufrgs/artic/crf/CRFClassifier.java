@@ -210,9 +210,9 @@ public final class CRFClassifier {
         return getCRFWords(words, getHeaderCRFWordsAsString(words), "/crf/models/headerSecondLevel.crf");
     }
 
-    private static ProcessBuilder getProcessBuilder(String trainFilePath, String modelPath) throws IOException {
+    private static ProcessBuilder getProcessBuilder(String crfContent, String modelPath) throws IOException {
         File crfPaperFile = File.createTempFile("temp", Long.toString(System.nanoTime()));
-        FileUtils.writeStringToFile(crfPaperFile, trainFilePath);
+        FileUtils.writeStringToFile(crfPaperFile, crfContent);
 
         return new ProcessBuilder("crf_test", "-m",
                 CRFClassifier.class.getResource(modelPath).getFile(),

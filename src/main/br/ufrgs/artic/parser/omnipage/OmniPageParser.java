@@ -238,6 +238,7 @@ public class OmniPageParser implements PageParser {
 
         int lineCounter = 0;
         int fontSizeSum = 0;
+        Element previousWorkingElement = null;
         if (paragraphs != null && !paragraphs.isEmpty()) {
 
             for (Element paragraphElement : paragraphs) {
@@ -249,7 +250,9 @@ public class OmniPageParser implements PageParser {
                         String fontFace = lineElement.getAttribute("fontFace");
 
                         if (fontFace == null || fontFace.isEmpty()) { //if yes, start run merge process
-                            augmentLineElement(lineElement);
+                            augmentLineElement(lineElement, previousWorkingElement);
+                        } else {
+                            previousWorkingElement = lineElement;
                         }
 
                         if (lineElement.getAttribute("t") != null && !lineElement.getAttribute("t").isEmpty() &&
@@ -288,40 +291,21 @@ public class OmniPageParser implements PageParser {
     /**
      * This augment the line element with the properties from the "run" child tags.
      *
-     * @param lineElement the line element without the desired properties
+     * @param lineElement     the line element without the desired properties
+     * @param previousElement the previous element to be used in the last case
      */
-    private void augmentLineElement(Element lineElement) {
+    private void augmentLineElement(Element lineElement, Element previousElement) {
 
         List<Element> runsOfLine = getElementsByTagName("run", lineElement);
 
+        Map<Double, Integer> fontSizeMapCount = new HashMap<>();
+
         if (runsOfLine != null && !runsOfLine.isEmpty()) {
-            Map<Double, Integer> fontSizeMapCount = new HashMap<>();
+
             for (Element currentRun : runsOfLine) {
                 String textContent = currentRun.getTextContent().replaceAll(" ", "").replaceAll("\n", "");
                 if (textContent.length() > 3) {
-
-                    checkMissingAttribute(lineElement, currentRun.getAttribute("bold"), "bold");
-                    checkMissingAttribute(lineElement, currentRun.getAttribute("italic"), "italic");
-                    checkMissingAttribute(lineElement, currentRun.getAttribute("fontFace"), "fontFace");
-                    checkMissingAttribute(lineElement, currentRun.getAttribute("fontFamily"), "fontFamily");
-
-                    String lineUnderlineString = lineElement.getAttribute("underlined");
-                    String runUnderlineString = currentRun.getAttribute("underlined");
-                    if ((lineUnderlineString == null || lineUnderlineString.isEmpty()
-                            || lineUnderlineString.equals("none")) &&
-                            runUnderlineString != null && !runUnderlineString.isEmpty()
-                            && !runUnderlineString.equals("none")) {
-                        lineElement.setAttribute("underlined", runUnderlineString);
-                    }
-
-                    String runFontSize = currentRun.getAttribute("fontSize");
-                    if (runFontSize != null && !runFontSize.isEmpty()) {
-                        Double currentFontSize = Double.valueOf(runFontSize);
-                        Integer currentFontCount = fontSizeMapCount.containsKey(currentFontSize) ? fontSizeMapCount.get(currentFontSize) + 1 : 0;
-                        fontSizeMapCount.put(currentFontSize, currentFontCount);
-                    }
-
-
+                    checkMissingElements(lineElement, currentRun, fontSizeMapCount);
                 }
             }
 
@@ -331,8 +315,34 @@ public class OmniPageParser implements PageParser {
                 lineElement.setAttribute("fontSize", String.format("%.2f", getFontSize(fontSizeMapCount)));
             }
 
+        } else {
+            checkMissingElements(lineElement, previousElement, fontSizeMapCount);
         }
 
+    }
+
+    private void checkMissingElements(Element lineElement, Element workingElement, Map<Double, Integer> fontSizeMapCount) {
+        checkMissingAttribute(lineElement, workingElement.getAttribute("bold"), "bold");
+        checkMissingAttribute(lineElement, workingElement.getAttribute("italic"), "italic");
+        checkMissingAttribute(lineElement, workingElement.getAttribute("fontFace"), "fontFace");
+        checkMissingAttribute(lineElement, workingElement.getAttribute("fontSize"), "fontSize");
+        checkMissingAttribute(lineElement, workingElement.getAttribute("fontFamily"), "fontFamily");
+
+        String lineUnderlineString = lineElement.getAttribute("underlined");
+        String workingUnderlineString = workingElement.getAttribute("underlined");
+        if ((lineUnderlineString == null || lineUnderlineString.isEmpty()
+                || lineUnderlineString.equals("none")) &&
+                workingUnderlineString != null && !workingUnderlineString.isEmpty()
+                && !workingUnderlineString.equals("none")) {
+            lineElement.setAttribute("underlined", workingUnderlineString);
+        }
+
+        String workingFontSize = workingElement.getAttribute("fontSize");
+        if (workingFontSize != null && !workingFontSize.isEmpty()) {
+            Double currentFontSize = Double.valueOf(workingFontSize);
+            Integer currentFontCount = fontSizeMapCount.containsKey(currentFontSize) ? fontSizeMapCount.get(currentFontSize) + 1 : 0;
+            fontSizeMapCount.put(currentFontSize, currentFontCount);
+        }
     }
 
     private Double getFontSize(Map<Double, Integer> fontSizeMapCount) {

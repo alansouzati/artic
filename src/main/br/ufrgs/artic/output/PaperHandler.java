@@ -41,7 +41,12 @@ public final class PaperHandler {
         String title = getWordsAsString(crfClassificationMap.get(LineClass.TITLE));
 
         List<CRFWord> possibleEmailWords = crfClassificationMap.get(LineClass.AUTHOR_INFORMATION);
-        possibleEmailWords.addAll(crfClassificationMap.get(LineClass.FOOTNOTE));
+
+        List<CRFWord> footnoteWords = crfClassificationMap.get(LineClass.FOOTNOTE);
+        if (footnoteWords != null && !footnoteWords.isEmpty()) {
+            possibleEmailWords.addAll(footnoteWords);
+        }
+
 
         List<String> emails = getEmails(possibleEmailWords);
         List<Author> authors = getAuthors(crfClassificationMap.get(LineClass.AUTHOR_INFORMATION));
@@ -70,37 +75,39 @@ public final class PaperHandler {
     private void assignEmailsToAuthors(List<Author> authors, List<String> emails) {
         if (emails != null && !emails.isEmpty()) {
 
+            if (authors.size() == 1 && emails.size() == 1) {
+                authors.get(0).email(emails.get(0));
+            }
+
             for (String email : emails) {
 
                 String prefix = email.split("@")[0];
 
-                if (authors != null) {
-                    boolean foundEmail = false;
-                    for (Author author : authors) {
-                        String[] names = author.getName().split(" ");
+                boolean foundEmail = false;
+                for (Author author : authors) {
+                    String[] names = author.getName().split(" ");
 
-                        String stringLeft = prefix.replaceAll("[^a-zA-Z]", "").toLowerCase().trim();
-                        String stringRight = author.getName().replaceAll("[^a-zA-Z]", "").toLowerCase().trim();
+                    String stringLeft = prefix.replaceAll("[^a-zA-Z]", "").toLowerCase().trim();
+                    String stringRight = author.getName().replaceAll("[^a-zA-Z]", "").toLowerCase().trim();
 
-                        int distance = DynamicProgramming.distance(stringLeft, stringRight);
+                    int distance = DynamicProgramming.distance(stringLeft, stringRight);
 
-                        int distanceRelative = (distance * 100) / (stringLeft.length() + stringRight.length());
+                    int distanceRelative = (distance * 100) / (stringLeft.length() + stringRight.length());
 
-                        for (String name : names) {
-                            stringRight = name.replaceAll("[^a-zA-Z]", "").toLowerCase().trim();
-                            int distanceSplit = DynamicProgramming.distance(stringLeft, stringRight);
+                    for (String name : names) {
+                        stringRight = name.replaceAll("[^a-zA-Z]", "").toLowerCase().trim();
+                        int distanceSplit = DynamicProgramming.distance(stringLeft, stringRight);
 
-                            int distanceSplitRelative = (distanceSplit * 100) / (stringLeft.length() + stringRight.length());
-                            if (distanceSplitRelative <= 20 || distanceRelative <= 20) {
-                                author.email(email.trim().toLowerCase());
-                                foundEmail = true;
-                                break;
-                            }
-
-                        }
-                        if (foundEmail) {
+                        int distanceSplitRelative = (distanceSplit * 100) / (stringLeft.length() + stringRight.length());
+                        if (distanceSplitRelative <= 20 || distanceRelative <= 20) {
+                            author.email(email.trim().toLowerCase());
+                            foundEmail = true;
                             break;
                         }
+
+                    }
+                    if (foundEmail) {
+                        break;
                     }
                 }
 
@@ -124,8 +131,7 @@ public final class PaperHandler {
         TreeMap<Integer, EntityGroup> authorsMap = entityGrouping(authorWordList,
                 paperBoundary.getHorizontalAuthor(), paperBoundary.getVerticalAuthor());
 
-
-        List<Author> authors = getAuthors(authorsMap);
+        List<Author> authors = getAuthorsFromMap(authorsMap);
 
         addAffiliations(affiliationWordList, authorsMap, authors);
 
@@ -135,6 +141,8 @@ public final class PaperHandler {
     private void addAffiliations(List<CRFWord> affiliationWordList, TreeMap<Integer, EntityGroup> authorsMap, List<Author> authors) {
         TreeMap<Integer, EntityGroup> affiliationsMap = entityGrouping(affiliationWordList,
                 paperBoundary.getHorizontalAffiliation(), paperBoundary.getVerticalAffiliation());
+
+        affiliationsMap = regroupLines(affiliationsMap);
 
         if (affiliationsMap.size() == 1) {
             for (Author author : authors) {
@@ -162,7 +170,62 @@ public final class PaperHandler {
         }
     }
 
-    private List<Author> getAuthors(TreeMap<Integer, EntityGroup> authorsMap) {
+    private TreeMap<Integer, EntityGroup> regroupLines(TreeMap<Integer, EntityGroup> affiliationsMap) {
+
+        List<Integer> toBeRemoved = new ArrayList<>();
+        for (Map.Entry<Integer, EntityGroup> currentAffiliationEntry : affiliationsMap.descendingMap().entrySet()) {
+            EntityGroup affiliationEntityGroup = currentAffiliationEntry.getValue();
+
+            Integer index = getGroupIndex(affiliationsMap, affiliationEntityGroup,
+                    paperBoundary.getHorizontalAffiliation(), paperBoundary.getVerticalAffiliation(), false);
+
+            if (index != null && !index.equals(currentAffiliationEntry.getKey()) && !toBeRemoved.contains(index)) {
+                EntityGroup mergingBoundingBox = affiliationsMap.get(index);
+                if (!mergingBoundingBox.getText().equals(affiliationEntityGroup.getText())) {
+                    mergingBoundingBox.getCrfWords().addAll(affiliationEntityGroup.getCrfWords());
+
+                    int right = affiliationEntityGroup.getDimension().getRight();
+                    EntityDimension dimension = mergingBoundingBox.getDimension();
+                    if (right > dimension.getRight()) {
+                        dimension.setRight(right);
+                    }
+
+                    int bottom = affiliationEntityGroup.getDimension().getBottom();
+                    if (bottom > dimension.getBottom()) {
+                        dimension.setBottom(bottom);
+                    }
+
+                    int left = affiliationEntityGroup.getDimension().getLeft();
+                    if (left < dimension.getLeft()) {
+                        dimension.setLeft(left);
+                    }
+
+                    int top = affiliationEntityGroup.getDimension().getBottom();
+                    if (top < dimension.getTop()) {
+                        dimension.setTop(top);
+                    }
+
+                    toBeRemoved.add(currentAffiliationEntry.getKey());
+                    toBeRemoved.remove(index);
+                }
+
+            } else {
+                if (affiliationEntityGroup.getCrfWords().size() <= 1) toBeRemoved.add(currentAffiliationEntry.getKey());
+            }
+        }
+
+        TreeMap<Integer, EntityGroup> resultMap = new TreeMap<>();
+        int index = 0;
+        for (Integer currentIndex : affiliationsMap.keySet()) {
+            if (!toBeRemoved.contains(currentIndex)) {
+                resultMap.put(index++, affiliationsMap.get(currentIndex));
+            }
+        }
+
+        return resultMap;
+    }
+
+    private List<Author> getAuthorsFromMap(TreeMap<Integer, EntityGroup> authorsMap) {
         List<Author> authors = new ArrayList<>();
         for (Map.Entry<Integer, EntityGroup> currentAuthorEntry : authorsMap.entrySet()) {
 
@@ -316,8 +379,8 @@ public final class PaperHandler {
             spacingVariation = Math.round((double) (100 * (biggestLineSpacing - smallestLineSpacing)) / (biggestLineSpacing + smallestLineSpacing));
         }
 
-        return ((horizontalSpacing <= horizontalBoundary)
-                || ((entityGroup.getText().length() <= 4 || currentEntityGroup.getText().length() <= 4) && diff <= 5))
+        return (horizontalSpacing <= horizontalBoundary)
+                || ((entityGroup.getText().length() <= 4 || currentEntityGroup.getText().length() <= 4) && diff <= 5)
                 && (differenceToLineSpacing <= 95 || spacingVariation < 35);
     }
 
@@ -389,62 +452,80 @@ public final class PaperHandler {
 
         StringBuilder nameBuilder = new StringBuilder();
         StringBuilder locationBuilder = new StringBuilder();
+        StringBuilder dateBuilder = new StringBuilder();
         for (CRFWord crfWord : crfWords) {
-            String wordContent = crfWord.getWord().getContent().trim();
+            String rawWord = crfWord.getWord().getContent();
+            String cleanWord = getWordWithNoPunctuationAtTheEnd(rawWord);
 
             switch (crfWord.getWordClass()) {
                 case JOURNAL_NAME:
-                    nameBuilder.append(wordContent).append(" ");
+                    nameBuilder.append(rawWord).append(" ");
                     break;
                 case CONFERENCE_LOCATION:
-                    locationBuilder.append(wordContent).append(" ");
+                    locationBuilder.append(rawWord).append(" ");
                     break;
                 case JOURNAL_VOLUME:
-                    venue.volume(wordContent.replaceAll("[^0-9]", ""));
+                    venue.volume(cleanWord.replaceAll("[^0-9]", ""));
                     break;
                 case CONFERENCE_VOLUME:
-                    venue.volume(wordContent.replaceAll("[^0-9]", ""));
+                    venue.volume(cleanWord.replaceAll("[^0-9]", ""));
                     break;
                 case JOURNAL_YEAR:
-                    venue.year(wordContent.replaceAll("[^0-9]", "").substring(0, 4));
+                    venue.year(cleanWord.replaceAll("[^0-9]", "").substring(0, 4));
                     break;
                 case CONFERENCE_YEAR:
-                    venue.year(wordContent.replaceAll("[^0-9]", "").substring(0, 4));
+                    venue.year(cleanWord.replaceAll("[^0-9]", "").substring(0, 4));
                     break;
                 case JOURNAL_PAGE:
-                    venue.page(wordContent);
+                    venue.page(cleanWord);
                     break;
                 case CONFERENCE_NUMBER:
-                    venue.number(wordContent.replaceAll("[^0-9]", ""));
+                    venue.number(cleanWord.replaceAll("[^0-9]", ""));
                     break;
                 case CONFERENCE_PAGE:
-                    venue.page(wordContent);
+                    venue.page(cleanWord);
                     break;
                 case CONFERENCE_NAME:
-                    nameBuilder.append(wordContent).append(" ");
+                    nameBuilder.append(rawWord).append(" ");
                     break;
                 case CONFERENCE_DATE:
-                    venue.date(wordContent.replaceAll("[,|©|;|.]", ""));
+                    dateBuilder.append(rawWord.replaceAll("[,|©|;|.]", "")).append(" ");
                     break;
                 case PUBLISHER:
-                    venue.publisher(wordContent.replaceAll("[;|\\.|,]", ""));
+                    venue.publisher(cleanWord.replaceAll("[;|\\.|,]", ""));
                     break;
                 case ISSN:
-                    venue.issn(wordContent.split("/")[0]);
+                    venue.issn(cleanWord.split("/")[0]);
                     break;
                 case ISBN:
-                    if (wordContent.endsWith(",") || wordContent.endsWith(".")) {
-                        wordContent = wordContent.substring(0, wordContent.length() - 1).trim();
+                    if (cleanWord.endsWith(",") || cleanWord.endsWith(".")) {
+                        cleanWord = cleanWord.substring(0, cleanWord.length() - 1).trim();
                     }
-                    venue.isbn(wordContent.split("\\.\\.\\.")[0].split("/\\$")[0]);
+                    venue.isbn(cleanWord.split("\\.\\.\\.")[0].split("/\\$")[0]);
                     break;
                 case DOI:
-                    venue.doi(wordContent);
+                    venue.doi(cleanWord);
                     break;
             }
 
         }
-        return venue.name(nameBuilder.toString().trim()).location(locationBuilder.toString().trim());
+
+
+        return venue.name(getWordWithNoPunctuationAtTheEnd(nameBuilder.toString()))
+                .location(getWordWithNoPunctuationAtTheEnd(locationBuilder.toString()))
+                .date(getWordWithNoPunctuationAtTheEnd(dateBuilder.toString()));
+    }
+
+    private String getWordWithNoPunctuationAtTheEnd(String cleanWord) {
+
+        cleanWord = cleanWord.trim();
+
+        if (cleanWord.endsWith(",") || cleanWord.endsWith(".")) {
+            cleanWord = cleanWord.substring(0, cleanWord.length() - 1);
+        }
+
+
+        return cleanWord.trim();
     }
 
     private String getWordsAsString(List<CRFWord> crfWords) {

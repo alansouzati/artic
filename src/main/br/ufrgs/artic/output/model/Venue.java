@@ -35,7 +35,11 @@ public class Venue {
 
     public Venue date(String date) {
         if (date != null && !date.isEmpty()) {
-            this.date = date;
+            if (this.date == null) {
+                this.date = "";
+            }
+
+            this.date += date;
         }
 
         return this;

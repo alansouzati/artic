@@ -44,7 +44,7 @@ public class Word extends Element {
         return NUMERAL_PATTERN.matcher(getContentNoSpecialCharacter()).matches();
     }
 
-    private boolean isMonth() {
+    public boolean isMonth() {
         return MONTH_LIST.contains(getContentNoSpecialCharacter().toLowerCase());
     }
 

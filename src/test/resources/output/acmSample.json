@@ -1,0 +1,25 @@
+{
+    "title": "A New Statistical Formula for Chinese Text Segmentation Incorporating Contextual Information",
+    "authors": [
+        {
+            "name": "Yubin Dai",
+            "affiliation": "Division of Information Studies School of Applied Science Nanyang Technological University Singapore 639798 (65) 790-4602"
+        },
+        {
+            "name": "Christopher S.G. Khoo",
+            "affiliation": "Division of Information Studies School of Applied Science Nanyang Technological University Singapore 639798 (65) 790-4602"
+        },
+        {
+            "name": "Teck Ee Loh",
+            "affiliation": "10 Kent Ridge Crescent Data Storage Institute Singapore 119260 (65) 874-8413"
+        }
+    ],
+    "venues": [
+        {
+            "publisher": "ACM",
+            "year": "1999",
+            "location": "Berkley, CA USA",
+            "isbn": "1-58113-096-1/99/0007"
+        }
+    ]
+}
