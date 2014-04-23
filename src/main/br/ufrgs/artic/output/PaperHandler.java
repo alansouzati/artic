@@ -75,8 +75,11 @@ public final class PaperHandler {
     private void assignEmailsToAuthors(List<Author> authors, List<String> emails) {
         if (emails != null && !emails.isEmpty()) {
 
-            if (authors.size() == 1 && emails.size() == 1) {
-                authors.get(0).email(emails.get(0));
+            if (authors != null && emails.size() == authors.size()) {
+                int authorIndex = authors.size() - 1;
+                for (Author author : authors) {
+                    author.email(emails.get(authorIndex--));
+                }
             }
 
             for (String email : emails) {

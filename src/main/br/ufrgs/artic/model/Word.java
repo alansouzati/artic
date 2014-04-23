@@ -282,6 +282,11 @@ public class Word extends Element {
         return context;
     }
 
+    @Override
+    public String toString() {
+        return getContent();
+    }
+
     public static class Builder extends ElementBuilder {
 
         //required params

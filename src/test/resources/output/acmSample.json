@@ -1,25 +1,30 @@
 {
-    "title": "A New Statistical Formula for Chinese Text Segmentation Incorporating Contextual Information",
+    "title": "A Dependability Perspective on Emerging Technologies",
     "authors": [
         {
-            "name": "Yubin Dai",
-            "affiliation": "Division of Information Studies School of Applied Science Nanyang Technological University Singapore 639798 (65) 790-4602"
+            "name": "Lucian Prodan",
+            "affiliation": "Advanced Computing Systems and Architectures (ACSA) Laboratory, Computer Science and Engineering Department, “Politehnica” University of Timisoara, 2 V.Parvan Blvd, 300223 Timisoara, Romania www.acsa.upt.ro +40-723-154989 +40-256-403258",
+            "email": "lprodan@cs.upt.ro"
         },
         {
-            "name": "Christopher S.G. Khoo",
-            "affiliation": "Division of Information Studies School of Applied Science Nanyang Technological University Singapore 639798 (65) 790-4602"
+            "name": "Mihai Udrescu",
+            "affiliation": "Advanced Computing Systems and Architectures (ACSA) Laboratory, Computer Science and Engineering Department, “Politehnica” University of Timisoara, 2 V.Parvan Blvd, 300223 Timisoara, Romania www.acsa.upt.ro +40-723-154989 +40-256-403258",
+            "email": "mudrescu@cs.upt.ro"
         },
         {
-            "name": "Teck Ee Loh",
-            "affiliation": "10 Kent Ridge Crescent Data Storage Institute Singapore 119260 (65) 874-8413"
+            "name": "Mircea Vladutiu",
+            "affiliation": "Advanced Computing Systems and Architectures (ACSA) Laboratory, Computer Science and Engineering Department, “Politehnica” University of Timisoara, 2 V.Parvan Blvd, 300223 Timisoara, Romania www.acsa.upt.ro +40-723-154989 +40-256-403258",
+            "email": "mvlad@cs.upt.ro"
         }
     ],
     "venues": [
         {
+            "name": "CF’06",
             "publisher": "ACM",
-            "year": "1999",
-            "location": "Berkley, CA USA",
-            "isbn": "1-58113-096-1/99/0007"
+            "date": "May 3–5",
+            "year": "2006",
+            "location": "Ischia, Italy",
+            "isbn": "1-59593-302-6/06/0005"
         }
     ]
 }
