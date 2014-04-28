@@ -1,30 +1,15 @@
 {
-    "title": "A Dependability Perspective on Emerging Technologies",
+    "title": "A Distributed 3D Graphics Library",
     "authors": [
         {
-            "name": "Lucian Prodan",
-            "affiliation": "Advanced Computing Systems and Architectures (ACSA) Laboratory, Computer Science and Engineering Department, “Politehnica” University of Timisoara, 2 V.Parvan Blvd, 300223 Timisoara, Romania www.acsa.upt.ro +40-723-154989 +40-256-403258",
-            "email": "lprodan@cs.upt.ro"
+            "name": "Blair MacIntyre",
+            "affiliation": "Department of Computer Science Columbia University",
+            "email": "bm@cs.columbia.edu"
         },
         {
-            "name": "Mihai Udrescu",
-            "affiliation": "Advanced Computing Systems and Architectures (ACSA) Laboratory, Computer Science and Engineering Department, “Politehnica” University of Timisoara, 2 V.Parvan Blvd, 300223 Timisoara, Romania www.acsa.upt.ro +40-723-154989 +40-256-403258",
-            "email": "mudrescu@cs.upt.ro"
-        },
-        {
-            "name": "Mircea Vladutiu",
-            "affiliation": "Advanced Computing Systems and Architectures (ACSA) Laboratory, Computer Science and Engineering Department, “Politehnica” University of Timisoara, 2 V.Parvan Blvd, 300223 Timisoara, Romania www.acsa.upt.ro +40-723-154989 +40-256-403258",
-            "email": "mvlad@cs.upt.ro"
-        }
-    ],
-    "venues": [
-        {
-            "name": "CF’06",
-            "publisher": "ACM",
-            "date": "May 3–5",
-            "year": "2006",
-            "location": "Ischia, Italy",
-            "isbn": "1-59593-302-6/06/0005"
+            "name": "Steven Feiner",
+            "affiliation": "Department of Computer Science Columbia University",
+            "email": "feiner@cs.columbia.edu"
         }
     ]
 }

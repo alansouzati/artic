@@ -73,9 +73,9 @@ public final class PaperHandler {
     }
 
     private void assignEmailsToAuthors(List<Author> authors, List<String> emails) {
-        if (emails != null && !emails.isEmpty()) {
+        if (emails != null && authors != null && !emails.isEmpty()) {
 
-            if (authors != null && emails.size() == authors.size()) {
+            if (emails.size() == authors.size()) {
                 int authorIndex = authors.size() - 1;
                 for (Author author : authors) {
                     author.email(emails.get(authorIndex--));
@@ -322,7 +322,7 @@ public final class PaperHandler {
                 if (diff < 0) {
                     topSpacing *= -1;
                 }
-                if (topSpacing <= 13) {
+                if (topSpacing <= 17) {
                     if (validateHorizontal(entityGroup, horizontalBoundary, left,
                             currentEntityGroup, currentDimension, biggestLineSpacing, smallestLineSpacing))
                         return currentIndex;
@@ -383,8 +383,8 @@ public final class PaperHandler {
         }
 
         return (horizontalSpacing <= horizontalBoundary)
-                || ((entityGroup.getText().length() <= 4 || currentEntityGroup.getText().length() <= 4) && diff <= 5)
-                && (differenceToLineSpacing <= 95 || spacingVariation < 35);
+                || (((entityGroup.getText().length() <= 4 || currentEntityGroup.getText().length() <= 4) && diff <= 5)
+                && (differenceToLineSpacing <= 100 || spacingVariation < 35));
     }
 
     private List<String> getEmails(List<CRFWord> possibleEmailWords) {
@@ -451,7 +451,7 @@ public final class PaperHandler {
             return null;
         }
 
-        Venue venue = new Venue();
+        Venue venue = null;
 
         StringBuilder nameBuilder = new StringBuilder();
         StringBuilder locationBuilder = new StringBuilder();
@@ -462,61 +462,109 @@ public final class PaperHandler {
 
             switch (crfWord.getWordClass()) {
                 case JOURNAL_NAME:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     nameBuilder.append(rawWord).append(" ");
                     break;
                 case CONFERENCE_LOCATION:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     locationBuilder.append(rawWord).append(" ");
                     break;
                 case JOURNAL_VOLUME:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     venue.volume(cleanWord.replaceAll("[^0-9]", ""));
                     break;
                 case CONFERENCE_VOLUME:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     venue.volume(cleanWord.replaceAll("[^0-9]", ""));
                     break;
                 case JOURNAL_YEAR:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     venue.year(cleanWord.replaceAll("[^0-9]", "").substring(0, 4));
                     break;
                 case CONFERENCE_YEAR:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     venue.year(cleanWord.replaceAll("[^0-9]", "").substring(0, 4));
                     break;
                 case JOURNAL_PAGE:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     venue.page(cleanWord);
                     break;
                 case CONFERENCE_NUMBER:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     venue.number(cleanWord.replaceAll("[^0-9]", ""));
                     break;
                 case CONFERENCE_PAGE:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     venue.page(cleanWord);
                     break;
                 case CONFERENCE_NAME:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     nameBuilder.append(rawWord).append(" ");
                     break;
                 case CONFERENCE_DATE:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     dateBuilder.append(rawWord.replaceAll("[,|©|;|.]", "")).append(" ");
                     break;
                 case PUBLISHER:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     venue.publisher(cleanWord.replaceAll("[;|\\.|,]", ""));
                     break;
                 case ISSN:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     venue.issn(cleanWord.split("/")[0]);
                     break;
                 case ISBN:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     if (cleanWord.endsWith(",") || cleanWord.endsWith(".")) {
                         cleanWord = cleanWord.substring(0, cleanWord.length() - 1).trim();
                     }
                     venue.isbn(cleanWord.split("\\.\\.\\.")[0].split("/\\$")[0]);
                     break;
                 case DOI:
+                    if (venue == null) {
+                        venue = new Venue();
+                    }
                     venue.doi(cleanWord);
                     break;
             }
 
         }
 
+        if (venue != null) {
+            venue.name(getWordWithNoPunctuationAtTheEnd(nameBuilder.toString()))
+                    .location(getWordWithNoPunctuationAtTheEnd(locationBuilder.toString()))
+                    .date(getWordWithNoPunctuationAtTheEnd(dateBuilder.toString()));
+        }
 
-        return venue.name(getWordWithNoPunctuationAtTheEnd(nameBuilder.toString()))
-                .location(getWordWithNoPunctuationAtTheEnd(locationBuilder.toString()))
-                .date(getWordWithNoPunctuationAtTheEnd(dateBuilder.toString()));
+        return venue;
     }
 
     private String getWordWithNoPunctuationAtTheEnd(String cleanWord) {

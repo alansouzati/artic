@@ -53,6 +53,26 @@ public class PaperHandlerTest {
         assertEquals(expectedPaperJSON, paper.toJSON(), true);
     }
 
+    @Test
+    public void itShouldGenerateMetadataForACMSampleNoFootnote() throws OmniPageParserException, CRFClassifierException, IOException, JSONException {
+
+        Paper paper = getPaper("/omnipage/acmSampleNoFootnote.xml");
+
+        String expectedPaperJSON = new String(Files.readAllBytes(Paths.get(getClass().getResource("/output/acmSampleNoFootnote.json").getFile())));
+
+        assertEquals(expectedPaperJSON, paper.toJSON(), true);
+    }
+
+    @Test
+    public void itShouldGenerateMetadataForACMSampleWithHeader() throws OmniPageParserException, CRFClassifierException, IOException, JSONException {
+
+        Paper paper = getPaper("/omnipage/acmSampleWithHeader.xml");
+
+        String expectedPaperJSON = new String(Files.readAllBytes(Paths.get(getClass().getResource("/output/acmSampleWithHeader.json").getFile())));
+
+        assertEquals(expectedPaperJSON, paper.toJSON(), true);
+    }
+
     private Paper getPaper(String xmlPath) throws OmniPageParserException, CRFClassifierException {
         List<Line> lines = new OmniPageParser(getClass().getResource(xmlPath).getFile()).getLines();
 

@@ -16,7 +16,7 @@ public class PaperBoundary {
 
     public PaperBoundary() {
         this.horizontalAuthor = 20;
-        this.verticalAuthor = 33;
+        this.verticalAuthor = 40;
 
         this.horizontalAffiliation = 17;
         this.verticalAffiliation = 40;
@@ -30,7 +30,7 @@ public class PaperBoundary {
                          int horizontalAuthorAffiliation, int verticalAuthorAffiliation) {
 
         this.horizontalAuthor = (horizontalAuthor > 0) ? horizontalAuthor : 20;
-        this.verticalAuthor = (verticalAuthor > 0) ? verticalAuthor : 33;
+        this.verticalAuthor = (verticalAuthor > 0) ? verticalAuthor : 40;
 
         this.horizontalAffiliation = (horizontalAffiliation > 0) ? horizontalAffiliation : 17;
         this.verticalAffiliation = (verticalAffiliation > 0) ? verticalAffiliation : 40;

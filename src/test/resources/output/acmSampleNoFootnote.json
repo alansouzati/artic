@@ -1,0 +1,15 @@
+{
+    "title": "Unsupervised Argument Identification for Semantic Role Labeling",
+    "authors": [
+        {
+            "name": "Omri Abend \u0027",
+            "affiliation": "\u0027 Institute of Computer Science, 2 ICNC Hebrew University of Jerusalem",
+            "email": "omria01@cs.huji.ac.il"
+        },
+        {
+            "name": "Roi Reichart  Ari Rappoport \u0027",
+            "affiliation": "\u0027 Institute of Computer Science, 2 ICNC Hebrew University of Jerusalem",
+            "email": "arir@cs.huji.ac.il"
+        }
+    ]
+}

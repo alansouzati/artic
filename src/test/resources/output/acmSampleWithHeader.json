@@ -1,0 +1,51 @@
+{
+    "title": "Harvesting with SONAR - The Value of Aggregating Social Network Information",
+    "authors": [
+        {
+            "name": "Ido Guy",
+            "affiliation": "IBM Haifa Research Lab Mt. Carmel, Haifa 31905, Israel",
+            "email": "ido@il.ibm.com"
+        },
+        {
+            "name": "Michal Jacovi",
+            "affiliation": "IBM Haifa Research Lab Mt. Carmel, Haifa 31905, Israel",
+            "email": "jacovi@il.ibm.com"
+        },
+        {
+            "name": "Elad Shahar",
+            "affiliation": "IBM Haifa Research Lab Mt. Carmel, Haifa 31905, Israel",
+            "email": "elads@il.ibm.com"
+        },
+        {
+            "name": "Noga Meshulam",
+            "affiliation": "IBM Haifa Research Lab Mt. Carmel, Haifa 31905, Israel",
+            "email": "noga@il.ibm.com"
+        },
+        {
+            "name": "Vladimir Soroka",
+            "affiliation": "IBM Haifa Research Lab Mt. Carmel, Haifa 31905, Israel",
+            "email": "vladi@il.ibm.com"
+        },
+        {
+            "name": "Stephen Farrell",
+            "affiliation": "IBM Almaden Research Center 650 Harry Road, San Jose, California",
+            "email": "sfarrell@almaden.ibm.com"
+        }
+    ],
+    "venues": [
+        {
+            "name": "CHI 2008 Proceedings · Online Social Networks",
+            "date": "April 5-10",
+            "year": "2008",
+            "location": "Florence, Italy"
+        },
+        {
+            "name": "CHI",
+            "publisher": "ACM",
+            "date": "April 5–10",
+            "year": "2008",
+            "location": "Florence, Italy",
+            "isbn": "978-1-60558-011-1/08/04"
+        }
+    ]
+}
