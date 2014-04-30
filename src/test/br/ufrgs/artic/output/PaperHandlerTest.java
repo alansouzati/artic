@@ -44,6 +44,16 @@ public class PaperHandlerTest {
     }
 
     @Test
+    public void itShouldGenerateMetadataForIEEESample() throws OmniPageParserException, CRFClassifierException, IOException, JSONException {
+
+        Paper paper = getPaper("/omnipage/ieeeSample.xml");
+
+        String expectedPaperJSON = new String(Files.readAllBytes(Paths.get(getClass().getResource("/output/ieeeSample.json").getFile())));
+
+        assertEquals(expectedPaperJSON, paper.toJSON(), true);
+    }
+
+    @Test
     public void itShouldGenerateMetadataForACMSampleWithSingleAuthor() throws OmniPageParserException, CRFClassifierException, IOException, JSONException {
 
         Paper paper = getPaper("/omnipage/acmSampleSingleAuthor.xml");

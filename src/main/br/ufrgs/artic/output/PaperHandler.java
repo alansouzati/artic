@@ -237,19 +237,21 @@ public final class PaperHandler {
             for (CRFWord currentName : entityGroup.getCrfWords()) {
                 String originalContent = currentName.getWord().getContent().trim();
 
-                if (!originalContent.toLowerCase().equals("and")) {
-                    authorName.append(originalContent).append(" ");
+                if (originalContent.replaceAll("[,:;0-9\\*\\(\\)\\[\\]\\{\\}∗]", "").length() > 0) {
+                    if (!originalContent.toLowerCase().equals("and")) {
+                        authorName.append(originalContent).append(" ");
 
-                    if (SEPARATOR_SIMPLE_PATTERN.matcher(originalContent).find()) {
+                        if (SEPARATOR_SIMPLE_PATTERN.matcher(originalContent).find()) {
+                            authors.add(new Author(authorName.toString()));
+                            authorName = new StringBuilder();
+                        }
+                    } else if (authorName.length() > 0) {
                         authors.add(new Author(authorName.toString()));
                         authorName = new StringBuilder();
                     }
-                } else {
-                    if (authorName.length() != 0) {
-                        authors.add(new Author(authorName.toString()));
-                        authorName = new StringBuilder();
-                    }
+
                 }
+
             }
 
             if (authorName.length() != 0) {
@@ -257,6 +259,7 @@ public final class PaperHandler {
             }
 
         }
+
         return authors;
     }
 
@@ -298,6 +301,7 @@ public final class PaperHandler {
                     entityGroup.getDimension().setTop(top);
                 }
             }
+
         }
         return groupMap;
     }
@@ -322,7 +326,7 @@ public final class PaperHandler {
                 if (diff < 0) {
                     topSpacing *= -1;
                 }
-                if (topSpacing <= 17) {
+                if (topSpacing <= 18) {
                     if (validateHorizontal(entityGroup, horizontalBoundary, left,
                             currentEntityGroup, currentDimension, biggestLineSpacing, smallestLineSpacing))
                         return currentIndex;

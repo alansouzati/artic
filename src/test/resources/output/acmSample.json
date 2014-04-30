@@ -1,15 +1,29 @@
 {
-    "title": "A Distributed 3D Graphics Library",
+    "title": "Presto: Distributed Machine Learning and Graph Processing with Sparse Matrices",
     "authors": [
         {
-            "name": "Blair MacIntyre",
-            "affiliation": "Department of Computer Science Columbia University",
-            "email": "bm@cs.columbia.edu"
+            "name": "Shivaram Venkataraman",
+            "affiliation": "1 UC Berkeley, 2 University of Chicago, HP Labs",
+            "email": "shivaram@cs.berkeley.edu"
         },
         {
-            "name": "Steven Feiner",
-            "affiliation": "Department of Computer Science Columbia University",
-            "email": "feiner@cs.columbia.edu"
+            "name": "Erik Bodzsar",
+            "affiliation": "1 UC Berkeley, 2 University of Chicago, HP Labs",
+            "email": "erik.bodzsar@hp.com"
+        },
+        {
+            "name": "Indrajit Roy Alvin AuYoung Robert S. Schreiber",
+            "affiliation": "1 UC Berkeley, 2 University of Chicago, HP Labs",
+            "email": "indrajitr@hp.com"
+        }
+    ],
+    "venues": [
+        {
+            "name": "Eurosys’13",
+            "publisher": "ACM",
+            "date": "April 15-17",
+            "year": "2013",
+            "isbn": "978-1-4503-1994-2/13/04"
         }
     ]
 }
