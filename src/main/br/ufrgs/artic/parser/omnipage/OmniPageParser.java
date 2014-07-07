@@ -1,9 +1,8 @@
 package br.ufrgs.artic.parser.omnipage;
 
-import br.ufrgs.artic.exceptions.OmniPageParserException;
+import br.ufrgs.artic.exceptions.ParserException;
 import br.ufrgs.artic.model.*;
 import br.ufrgs.artic.parser.PageParser;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -24,55 +23,90 @@ import static br.ufrgs.artic.utils.XMLUtils.getElementsByTagName;
  */
 public class OmniPageParser implements PageParser {
 
-    private static final Logger LOGGER = Logger.getLogger("OmniPageParser");
+    public Page getPage(String pathToFile) throws ParserException {
 
-    private Document pageAsXML;
-    private List<Line> lines;
+        double averagePageFontSize = 0;
+        int biggestTop = 0;
+        int biggestLeft = 0;
 
-    public OmniPageParser(String pathToXML) throws OmniPageParserException {
-        InputStream inputStream = null;
-        try {
-            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Element pageElement = getPageAsDocument(pathToFile).getDocumentElement();
+        List<Element> paragraphs = getElementsByTagName("para", pageElement);
 
-            inputStream = new FileInputStream(pathToXML);
+        int lineCounter = 0;
+        int fontSizeSum = 0;
+        Element previousWorkingElement = null;
+        if (paragraphs != null && !paragraphs.isEmpty()) {
 
-            pageAsXML = db.parse(inputStream);
+            for (Element paragraphElement : paragraphs) {
 
-        } catch (ParserConfigurationException | SAXException e) {
-            throw new OmniPageParserException(String.format("The content of %s is an invalid XML file.", pathToXML), e);
-        } catch (IOException e) {
-            throw new OmniPageParserException(String.format("Could not open %s. The does not exists or do not allow us to open.", pathToXML), e);
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    LOGGER.error(String.format("Failed to close the stream for %s", pathToXML));
+                List<Element> linesOfParagraph = getElementsByTagName("ln", paragraphElement);
+
+                if (linesOfParagraph != null && !linesOfParagraph.isEmpty()) {
+                    for (Element lineElement : linesOfParagraph) {
+                        String fontFace = lineElement.getAttribute("fontFace");
+
+                        if (fontFace == null || fontFace.isEmpty()) { //if yes, start run merge process
+                            augmentLineElement(lineElement, previousWorkingElement);
+                        } else {
+                            previousWorkingElement = lineElement;
+                        }
+
+                        if (lineElement.getAttribute("t") != null && !lineElement.getAttribute("t").isEmpty() &&
+                                lineElement.getAttribute("l") != null && !lineElement.getAttribute("l").isEmpty()) {
+                            int top = Integer.parseInt(lineElement.getAttribute("t").replaceAll(",", "\\."));
+
+                            if (top > biggestTop) {
+                                biggestTop = top;
+                            }
+
+                            int left = Integer.parseInt(lineElement.getAttribute("l").replaceAll(",", "\\."));
+
+                            if (left > biggestLeft) {
+                                biggestLeft = left;
+                            }
+                        }
+
+                        double fontSize = 0;
+                        if (lineElement.getAttribute("fontSize") != null && !lineElement.getAttribute("fontSize").isEmpty()) {
+                            fontSize = Double.valueOf(lineElement.getAttribute("fontSize").replaceAll(",", "\\."));
+                        }
+
+
+                        fontSizeSum += fontSize;
+                        lineCounter++;
+                    }
                 }
             }
 
+            averagePageFontSize = (double) fontSizeSum / lineCounter;
+        }
+
+        Page page = new Page(averagePageFontSize, biggestTop, biggestLeft);
+        List<Line> lines = getLines(pageElement, page);
+        page.setLines(lines);
+
+        return page;
+    }
+
+    private Document getPageAsDocument(String pathToXML) throws ParserException {
+        try (InputStream inputStream = new FileInputStream(pathToXML)) {
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+
+            return db.parse(inputStream);
+
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new ParserException(String.format("The content of %s is an invalid XML file for OmniPage.", pathToXML), e);
+        } catch (IOException e) {
+            throw new ParserException(String.format("Could not open %s. The does not exists or do not allow us to open.", pathToXML), e);
         }
     }
 
-    @Override
-    public List<Line> getLines() {
-
-        if (lines == null) {
-            Page page = getPageInstance();
-
-            this.lines = getLinesOfPage(page);
-        }
-
-        return lines;
-    }
-
-    private List<Line> getLinesOfPage(Page page) {
+    private List<Line> getLines(Element pageElement, Page page) {
         List<Line> lines = new ArrayList<>();
 
+        List<Element> sections = getElementsByTagName("section", pageElement);
 
-        List<Element> sections = getElementsByTagName("section", pageAsXML.getDocumentElement());
-
-        List<Element> paragraphs = getElementsByTagName("para", pageAsXML.getDocumentElement());
+        List<Element> paragraphs = getElementsByTagName("para", pageElement);
 
         Integer lineCounter = 0;
         Boolean foundIntroOrAbstract = false;
@@ -226,66 +260,6 @@ public class OmniPageParser implements PageParser {
     private String getOriginalText(Element element) {
         return (element != null && element.getTextContent() != null && !element.getTextContent().isEmpty()) ?
                 element.getTextContent().trim().replaceAll("\\s+", " ") : "";
-    }
-
-    private Page getPageInstance() {
-
-        double averagePageFontSize = 0;
-        int biggestTop = 0;
-        int biggestLeft = 0;
-
-        List<Element> paragraphs = getElementsByTagName("para", pageAsXML.getDocumentElement());
-
-        int lineCounter = 0;
-        int fontSizeSum = 0;
-        Element previousWorkingElement = null;
-        if (paragraphs != null && !paragraphs.isEmpty()) {
-
-            for (Element paragraphElement : paragraphs) {
-
-                List<Element> linesOfParagraph = getElementsByTagName("ln", paragraphElement);
-
-                if (linesOfParagraph != null && !linesOfParagraph.isEmpty()) {
-                    for (Element lineElement : linesOfParagraph) {
-                        String fontFace = lineElement.getAttribute("fontFace");
-
-                        if (fontFace == null || fontFace.isEmpty()) { //if yes, start run merge process
-                            augmentLineElement(lineElement, previousWorkingElement);
-                        } else {
-                            previousWorkingElement = lineElement;
-                        }
-
-                        if (lineElement.getAttribute("t") != null && !lineElement.getAttribute("t").isEmpty() &&
-                                lineElement.getAttribute("l") != null && !lineElement.getAttribute("l").isEmpty()) {
-                            int top = Integer.parseInt(lineElement.getAttribute("t").replaceAll(",", "\\."));
-
-                            if (top > biggestTop) {
-                                biggestTop = top;
-                            }
-
-                            int left = Integer.parseInt(lineElement.getAttribute("l").replaceAll(",", "\\."));
-
-                            if (left > biggestLeft) {
-                                biggestLeft = left;
-                            }
-                        }
-
-                        double fontSize = 0;
-                        if (lineElement.getAttribute("fontSize") != null && !lineElement.getAttribute("fontSize").isEmpty()) {
-                            fontSize = Double.valueOf(lineElement.getAttribute("fontSize").replaceAll(",", "\\."));
-                        }
-
-
-                        fontSizeSum += fontSize;
-                        lineCounter++;
-                    }
-                }
-            }
-
-            averagePageFontSize = (double) fontSizeSum / lineCounter;
-        }
-
-        return new Page(averagePageFontSize, biggestTop, biggestLeft);
     }
 
     /**

@@ -5,7 +5,7 @@ import br.ufrgs.artic.crf.model.CRFLine;
 import br.ufrgs.artic.crf.model.CRFWord;
 import br.ufrgs.artic.crf.model.LineClass;
 import br.ufrgs.artic.exceptions.CRFClassifierException;
-import br.ufrgs.artic.exceptions.OmniPageParserException;
+import br.ufrgs.artic.exceptions.ParserException;
 import br.ufrgs.artic.model.Line;
 import br.ufrgs.artic.output.model.Paper;
 import br.ufrgs.artic.output.model.PaperBoundary;
@@ -24,7 +24,7 @@ import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 public class PaperHandlerTest {
 
     @Test
-    public void itShouldGenerateMetadataForElsevierSample() throws OmniPageParserException, CRFClassifierException, IOException, JSONException {
+    public void itShouldGenerateMetadataForElsevierSample() throws ParserException, CRFClassifierException, IOException, JSONException {
 
         Paper paper = getPaper("/omnipage/elsevierSample.xml");
 
@@ -34,7 +34,7 @@ public class PaperHandlerTest {
     }
 
     @Test
-    public void itShouldGenerateMetadataForACMSample() throws OmniPageParserException, CRFClassifierException, IOException, JSONException {
+    public void itShouldGenerateMetadataForACMSample() throws ParserException, CRFClassifierException, IOException, JSONException {
 
         Paper paper = getPaper("/omnipage/acmSample.xml");
 
@@ -44,7 +44,7 @@ public class PaperHandlerTest {
     }
 
     @Test
-    public void itShouldGenerateMetadataForIEEESample() throws OmniPageParserException, CRFClassifierException, IOException, JSONException {
+    public void itShouldGenerateMetadataForIEEESample() throws ParserException, CRFClassifierException, IOException, JSONException {
 
         Paper paper = getPaper("/omnipage/ieeeSample.xml");
 
@@ -54,7 +54,7 @@ public class PaperHandlerTest {
     }
 
     @Test
-    public void itShouldGenerateMetadataForACMSampleWithSingleAuthor() throws OmniPageParserException, CRFClassifierException, IOException, JSONException {
+    public void itShouldGenerateMetadataForACMSampleWithSingleAuthor() throws ParserException, CRFClassifierException, IOException, JSONException {
 
         Paper paper = getPaper("/omnipage/acmSampleSingleAuthor.xml");
 
@@ -64,7 +64,7 @@ public class PaperHandlerTest {
     }
 
     @Test
-    public void itShouldGenerateMetadataForACMSampleNoFootnote() throws OmniPageParserException, CRFClassifierException, IOException, JSONException {
+    public void itShouldGenerateMetadataForACMSampleNoFootnote() throws ParserException, CRFClassifierException, IOException, JSONException {
 
         Paper paper = getPaper("/omnipage/acmSampleNoFootnote.xml");
 
@@ -74,7 +74,7 @@ public class PaperHandlerTest {
     }
 
     @Test
-    public void itShouldGenerateMetadataForACMSampleWithHeader() throws OmniPageParserException, CRFClassifierException, IOException, JSONException {
+    public void itShouldGenerateMetadataForACMSampleWithHeader() throws ParserException, CRFClassifierException, IOException, JSONException {
 
         Paper paper = getPaper("/omnipage/acmSampleWithHeader.xml");
 
@@ -83,8 +83,8 @@ public class PaperHandlerTest {
         assertEquals(expectedPaperJSON, paper.toJSON(), true);
     }
 
-    private Paper getPaper(String xmlPath) throws OmniPageParserException, CRFClassifierException {
-        List<Line> lines = new OmniPageParser(getClass().getResource(xmlPath).getFile()).getLines();
+    private Paper getPaper(String xmlPath) throws ParserException, CRFClassifierException {
+        List<Line> lines = new OmniPageParser().getPage(getClass().getResource(xmlPath).getFile()).getLines();
 
         List<CRFLine> crfLines = CRFClassifier.classifyFirstLevelCRF(lines);
 

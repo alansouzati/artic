@@ -2,8 +2,6 @@ package br.ufrgs.artic.output.model;
 
 /**
  * Configuration class that holds the boundaries for the paper.
- * <p/>
- * TODO: read the boundary from the configuration file
  */
 public class PaperBoundary {
 

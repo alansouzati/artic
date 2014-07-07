@@ -1,5 +1,7 @@
 package br.ufrgs.artic.model;
 
+import java.util.List;
+
 /**
  * This class represents a page for a given document
  */
@@ -8,6 +10,8 @@ public class Page {
     private final double averageFontSize;
     private final int top;
     private final int left;
+
+    private List<Line> lines;
 
     /**
      * Defines the required attributes of a page
@@ -37,5 +41,13 @@ public class Page {
 
     public int getLeft() {
         return left;
+    }
+
+    public List<Line> getLines() {
+        return lines;
+    }
+
+    public void setLines(List<Line> lines) {
+        this.lines = lines;
     }
 }

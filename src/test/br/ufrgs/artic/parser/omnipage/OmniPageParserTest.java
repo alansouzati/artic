@@ -1,6 +1,6 @@
 package br.ufrgs.artic.parser.omnipage;
 
-import br.ufrgs.artic.exceptions.OmniPageParserException;
+import br.ufrgs.artic.exceptions.ParserException;
 import br.ufrgs.artic.model.*;
 import org.junit.Test;
 
@@ -12,9 +12,9 @@ import static org.junit.Assert.assertNotNull;
 public class OmniPageParserTest {
 
     @Test
-    public void itShouldCreateLinesWithValidXMLProvided() throws OmniPageParserException {
+    public void itShouldCreateLinesWithValidXMLProvided() throws ParserException {
 
-        List<Line> validLines = new OmniPageParser(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
+        List<Line> validLines = new OmniPageParser().getPage(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
 
         assertNotNull(validLines);
 

@@ -5,7 +5,7 @@ import br.ufrgs.artic.crf.model.CRFWord;
 import br.ufrgs.artic.crf.model.LineClass;
 import br.ufrgs.artic.crf.model.WordClass;
 import br.ufrgs.artic.exceptions.CRFClassifierException;
-import br.ufrgs.artic.exceptions.OmniPageParserException;
+import br.ufrgs.artic.exceptions.ParserException;
 import br.ufrgs.artic.model.Line;
 import br.ufrgs.artic.model.Word;
 import br.ufrgs.artic.parser.omnipage.OmniPageParser;
@@ -24,9 +24,9 @@ import static org.junit.Assert.assertNotNull;
 public class CRFClassifierTest {
 
     @Test
-    public void itShouldParseLinesToCRFWhenProvidingValidLineList() throws OmniPageParserException, IOException {
+    public void itShouldParseLinesToCRFWhenProvidingValidLineList() throws ParserException, IOException {
 
-        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
+        List<Line> lines = new OmniPageParser().getPage(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
 
         String crfLines = CRFClassifier.getCRFLinesAsString(lines);
 
@@ -37,9 +37,9 @@ public class CRFClassifierTest {
     }
 
     @Test
-    public void itShouldClassifyLineWhenProvidingValidLineList() throws OmniPageParserException, CRFClassifierException, IOException {
+    public void itShouldClassifyLineWhenProvidingValidLineList() throws ParserException, CRFClassifierException, IOException {
 
-        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
+        List<Line> lines = new OmniPageParser().getPage(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
 
         List<CRFLine> crfLines = CRFClassifier.classifyFirstLevelCRF(lines);
 
@@ -61,9 +61,9 @@ public class CRFClassifierTest {
     }
 
     @Test
-    public void itShouldParseHeaderWordsToCRFWhenProvidingValidCRFLineList() throws OmniPageParserException, IOException {
+    public void itShouldParseHeaderWordsToCRFWhenProvidingValidCRFLineList() throws ParserException, IOException {
 
-        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
+        List<Line> lines = new OmniPageParser().getPage(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
 
         List<Word> words = new ArrayList<>();
         words.addAll(lines.get(0).getWords());
@@ -78,9 +78,9 @@ public class CRFClassifierTest {
     }
 
     @Test
-    public void itShouldParseAuthorInformationWordsToCRFWhenProvidingValidCRFLineList() throws OmniPageParserException, IOException {
+    public void itShouldParseAuthorInformationWordsToCRFWhenProvidingValidCRFLineList() throws ParserException, IOException {
 
-        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
+        List<Line> lines = new OmniPageParser().getPage(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
 
         List<Word> words = new ArrayList<>();
         words.addAll(lines.get(3).getWords());
@@ -96,9 +96,9 @@ public class CRFClassifierTest {
     }
 
     @Test
-    public void itShouldParseFootnoteWordsToCRFWhenProvidingValidCRFLineList() throws OmniPageParserException, IOException {
+    public void itShouldParseFootnoteWordsToCRFWhenProvidingValidCRFLineList() throws ParserException, IOException {
 
-        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
+        List<Line> lines = new OmniPageParser().getPage(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
 
         List<Word> words = new ArrayList<>();
         words.addAll(lines.get(38).getWords());
@@ -116,9 +116,9 @@ public class CRFClassifierTest {
     }
 
     @Test
-    public void itShouldClassifyWordsWhenProvidingValidCRFLineList() throws OmniPageParserException, CRFClassifierException, IOException {
+    public void itShouldClassifyWordsWhenProvidingValidCRFLineList() throws ParserException, CRFClassifierException, IOException {
 
-        List<Line> lines = new OmniPageParser(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
+        List<Line> lines = new OmniPageParser().getPage(getClass().getResource("/omnipage/elsevierSample.xml").getFile()).getLines();
 
         List<CRFLine> crfLines = CRFClassifier.classifyFirstLevelCRF(lines);
 
