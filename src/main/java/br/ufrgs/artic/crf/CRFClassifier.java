@@ -14,10 +14,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static br.ufrgs.artic.utils.CommonUtils.getTempFile;
 
 /**
  * This is the core class responsible for classifying the given lines using Conditional Random Fields (CRF).
@@ -26,7 +29,19 @@ public final class CRFClassifier {
 
     private static final Logger LOGGER = Logger.getLogger("CRFClassifier");
 
+    private static final String FIRST_LEVEL_MODEL;
+    private static final String HEADER_MODEL;
+    private static final String FOOTNOTE_MODEL;
+    private static final String AUTHOR_INFORMATION_MODEL;
+
     private CRFClassifier() {
+    }
+
+    static {
+        FIRST_LEVEL_MODEL = getTempFile("crf/models/firstLevel.crf").getAbsolutePath();
+        HEADER_MODEL = getTempFile("crf/models/headerSecondLevel.crf").getAbsolutePath();
+        FOOTNOTE_MODEL = getTempFile("crf/models/footnoteSecondLevel.crf").getAbsolutePath();
+        AUTHOR_INFORMATION_MODEL = getTempFile("crf/models/authorInformationSecondLevel.crf").getAbsolutePath();
     }
 
     /**
@@ -44,7 +59,7 @@ public final class CRFClassifier {
         List<CRFLine> crfLines = new ArrayList<>();
 
         try {
-            ProcessBuilder process = getProcessBuilder(getCRFLinesAsString(lines), "/crf/models/firstLevel.crf");
+            ProcessBuilder process = getProcessBuilder(getCRFLinesAsString(lines), FIRST_LEVEL_MODEL);
             Process pr = process.start();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()))) {
 
@@ -176,7 +191,7 @@ public final class CRFClassifier {
             throw new IllegalArgumentException("Words is a required attribute.");
         }
 
-        return getCRFWords(words, getAuthorInformationCRFWordsAsString(words), "/crf/models/authorInformationSecondLevel.crf");
+        return getCRFWords(words, getAuthorInformationCRFWordsAsString(words), AUTHOR_INFORMATION_MODEL);
     }
 
     private static List<CRFWord> classifyTitle(List<Word> words) throws CRFClassifierException {
@@ -198,7 +213,7 @@ public final class CRFClassifier {
             throw new IllegalArgumentException("Words is a required attribute.");
         }
 
-        return getCRFWords(words, getFootnoteCRFWordsAsString(words), "/crf/models/footnoteSecondLevel.crf");
+        return getCRFWords(words, getFootnoteCRFWordsAsString(words), FOOTNOTE_MODEL);
     }
 
 
@@ -207,7 +222,7 @@ public final class CRFClassifier {
             throw new IllegalArgumentException("Words is a required attribute.");
         }
 
-        return getCRFWords(words, getHeaderCRFWordsAsString(words), "/crf/models/headerSecondLevel.crf");
+        return getCRFWords(words, getHeaderCRFWordsAsString(words), HEADER_MODEL);
     }
 
     private static ProcessBuilder getProcessBuilder(String crfContent, String modelPath) throws IOException {
@@ -215,7 +230,7 @@ public final class CRFClassifier {
         FileUtils.writeStringToFile(crfPaperFile, crfContent);
 
         return new ProcessBuilder("crf_test", "-m",
-                CRFClassifier.class.getResource(modelPath).getFile(),
+                modelPath,
                 crfPaperFile.getAbsolutePath());
     }
 

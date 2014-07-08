@@ -15,6 +15,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -27,6 +28,8 @@ import java.util.Map;
  */
 public class ArticRunner {
 
+    private static final Logger LOGGER = Logger.getLogger("CommonUtils");
+
     @Inject
     private PageParser pageParser;
 
@@ -37,7 +40,9 @@ public class ArticRunner {
 
     public static void main(String[] args) throws ParserException, CRFClassifierException, IOException {
 
-        File[] papersInXML = new File(args[0]).listFiles(new FileFilter() {
+        String pathToXML = args.length > 0 && args[0] != null && !args[0].isEmpty() ? args[0] : System.getProperty("user.dir");
+
+        File[] papersInXML = new File(pathToXML).listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
                 return file.getAbsolutePath().endsWith(".xml") || file.getAbsolutePath().endsWith(".xml");
@@ -50,6 +55,8 @@ public class ArticRunner {
 
             for (File xml : papersInXML) {
 
+                LOGGER.debug(String.format("Starting generation process for %s", xml.getAbsolutePath()));
+
                 Paper paper = getPaper(xml, articRunner.pageParser, articRunner.paperHandler);
 
                 String fileName = xml.getName().split("\\.")[0];
@@ -60,7 +67,7 @@ public class ArticRunner {
                     System.err.println("Could not create a new file. Check permissions");
                 }
 
-                System.out.println("Writing in: " + jsonOutput.getAbsolutePath());
+                LOGGER.debug(String.format("Done! Writing at %s", jsonOutput.getAbsolutePath()));
                 FileUtils.writeStringToFile(jsonOutput, paper.toJSON());
 
             }

@@ -1,11 +1,9 @@
 package br.ufrgs.artic.utils;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -319,7 +317,7 @@ public final class CommonUtils {
         CONFERENCE_LIST = new ArrayList<>();
 
         try {
-            FileInputStream fis = new FileInputStream(CommonUtils.class.getResource("/conferences.txt").getFile());
+            FileInputStream fis = new FileInputStream(getTempFile("conferences.txt"));
             BufferedReader br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
             String line;
 
@@ -331,4 +329,17 @@ public final class CommonUtils {
             LOGGER.error("A problem occurred trying to load the conference list.", e);
         }
     }
+
+    public static File getTempFile(String localFile) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        File destination = null;
+        try {
+            destination = File.createTempFile("temp", Long.toString(System.nanoTime()));
+            FileUtils.copyURLToFile(classLoader.getResource(localFile), destination);
+        } catch (IOException e) {
+            LOGGER.error("Not able to create temp file", e);
+        }
+        return destination;
+    }
+
 }

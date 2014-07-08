@@ -395,15 +395,17 @@ public final class PaperHandler {
 
         List<CRFWord> emailWordList = new ArrayList<>();
 
-        for (CRFWord crfWord : possibleEmailWords) {
-            if (WordClass.EMAIL.equals(crfWord.getWordClass())) {
-                String content = crfWord.getWord().getContentNoSpecialCharacter().replaceAll("[^a-zA-Z]", "").toLowerCase();
-                if (!"email".equals(content) && !"address".equals(content) && !"addresses".equals(content)) {
+        if (possibleEmailWords != null) {
+            for (CRFWord crfWord : possibleEmailWords) {
+                if (WordClass.EMAIL.equals(crfWord.getWordClass())) {
+                    String content = crfWord.getWord().getContentNoSpecialCharacter().replaceAll("[^a-zA-Z]", "").toLowerCase();
+                    if (!"email".equals(content) && !"address".equals(content) && !"addresses".equals(content)) {
+                        emailWordList.add(crfWord);
+                    }
+
+                } else if (WordClass.AFFILIATION.equals(crfWord.getWordClass()) && crfWord.getWord().getContent().contains("@")) {
                     emailWordList.add(crfWord);
                 }
-
-            } else if (WordClass.AFFILIATION.equals(crfWord.getWordClass()) && crfWord.getWord().getContent().contains("@")) {
-                emailWordList.add(crfWord);
             }
         }
 
@@ -586,13 +588,16 @@ public final class PaperHandler {
     private String getWordsAsString(List<CRFWord> crfWords) {
         StringBuilder wordsBuilder = new StringBuilder();
         int index = 0;
-        for (CRFWord crfWord : crfWords) {
-            wordsBuilder.append(crfWord.getWord().getContent());
-            if (index++ < crfWords.size() - 1) {
-                wordsBuilder.append(" ");
-            }
+        if (crfWords != null) {
+            for (CRFWord crfWord : crfWords) {
+                wordsBuilder.append(crfWord.getWord().getContent());
+                if (index++ < crfWords.size() - 1) {
+                    wordsBuilder.append(" ");
+                }
 
+            }
         }
+
         return wordsBuilder.toString();
     }
 }
