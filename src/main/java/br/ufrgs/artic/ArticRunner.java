@@ -28,15 +28,13 @@ import java.util.Map;
  */
 public class ArticRunner {
 
-    private static final Logger LOGGER = Logger.getLogger("CommonUtils");
+    private static final Logger LOGGER = Logger.getLogger("ArticRunner");
 
     @Inject
     private PageParser pageParser;
 
     @Inject
     private PaperHandler paperHandler;
-
-    private static final Injector injector = Guice.createInjector(new ArticInjector());
 
     public static void main(String[] args) throws ParserException, CRFClassifierException, IOException {
 
@@ -51,7 +49,7 @@ public class ArticRunner {
 
         if (papersInXML != null && papersInXML.length > 0) {
 
-            ArticRunner articRunner = injector.getInstance(ArticRunner.class);
+            ArticRunner articRunner = getArticRunner(args);
 
             for (File xml : papersInXML) {
 
@@ -64,7 +62,9 @@ public class ArticRunner {
                 File jsonOutput = new File(xml.getParent(), fileName + ".json");
 
                 if (!jsonOutput.exists() && !jsonOutput.createNewFile()) {
-                    System.err.println("Could not create a new file. Check permissions");
+                    LOGGER.error("Could not create a new file. Check permissions");
+                } else if (jsonOutput.exists() && !jsonOutput.delete()) {
+                    LOGGER.error("Could not delete existing json file. Check permissions");
                 }
 
                 LOGGER.debug(String.format("Done! Writing at %s", jsonOutput.getAbsolutePath()));
@@ -74,6 +74,12 @@ public class ArticRunner {
         }
 
 
+    }
+
+    private static ArticRunner getArticRunner(String[] args) {
+        String overrideProperties = args.length == 2 ? args[1] : null;
+        Injector injector = Guice.createInjector(new ArticInjector(overrideProperties));
+        return injector.getInstance(ArticRunner.class);
     }
 
     private static Paper getPaper(File xml, PageParser pageParser, PaperHandler paperHandler) throws ParserException, CRFClassifierException {
