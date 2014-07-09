@@ -40,12 +40,16 @@ public class ArticRunner {
 
         String pathToXML = args.length > 0 && args[0] != null && !args[0].isEmpty() ? args[0] : System.getProperty("user.dir");
 
-        File[] papersInXML = new File(pathToXML).listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.getAbsolutePath().endsWith(".xml") || file.getAbsolutePath().endsWith(".xml");
-            }
-        });
+        File[] papersInXML = {new File(pathToXML)};
+        if (!pathToXML.endsWith(".xml")) {
+            papersInXML = new File(pathToXML).listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    return file.getAbsolutePath().endsWith(".xml") || file.getAbsolutePath().endsWith(".xml");
+                }
+            });
+        }
+
 
         if (papersInXML != null && papersInXML.length > 0) {
 
