@@ -80,6 +80,17 @@
                     </descriptorRefs>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5</version>
+            </plugin>
         </plugins>
     </build>
+
+    <scm>
+        <connection>scm:git:git@github.com:alansouzati/artic.git</connection>
+        <url>scm:git:git@github.com:alansouzati/artic.git</url>
+        <developerConnection>scm:git:git@github.com:alansouzati/artic.git</developerConnection>
+    </scm>
 </project>
