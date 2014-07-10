@@ -79,4 +79,12 @@ We have experimentally set to 21% based on our dataset.
 The **page.parser.instance** defines the engine to parse the input (e.g. xml) to the Artic Page instance. For this first version,
 OmniPageParser is the only one being provided.
 
+In order to override some configuration you need to specify the location using one of the following ways:
 
+* Add a artic.properties where you jar is located
+* Specify the location of your properties while running the jar
+```java
+    java -jar artic-1.0.jar path/to/xml/folder/or/xml/file config/artic.properties
+```
+
+While running the jar, the first argument specifies the path to your xml folder or xml file. The last argument is the path to your custom properties file.
