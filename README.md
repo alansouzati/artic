@@ -56,7 +56,7 @@ Artic provides some configuration parameters in order to allow changes to be mad
 The most important attribute that could be eventually changed is the boundary configuration for author and affiliations.
 The configuration is provided through a properties file **artic.properties**, which is defined bellow: 
 
-```javascript
+```json
     # default page parser engine is the OmniPage Professional Version 18
     page.parser.instance=br.ufrgs.artic.parser.omnipage.OmniPageParser
     
