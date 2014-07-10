@@ -21,12 +21,13 @@ Dependencies:
 
 After all the dependencies are installed and configured, execute the following steps to get the JSON file with metadata content.
 
-1. [Download](https://github.com/alansouzati/artic/releases/download/artic-1.0/artic-1.0.jar) Artic jar file
-2. Go to the folder where OmniPage XML files are located
-3. Run the following command:```java
+* [Download](https://github.com/alansouzati/artic/releases/download/artic-1.0/artic-1.0.jar) Artic jar file
+* Go to the folder where OmniPage XML files are located
+* Run the following command:
+```java
     java -jar artic-1.0.jar
 ```
-4. At the same location, a .json file will be created with the same name as the XML file of the given paper, which looks like this:
+* At the same location, a .json file will be created with the same name as the XML file of the given paper, which looks like this:
 ```json
     {
         "title": "Artic: Metadata Extractor tool",
