@@ -50,7 +50,6 @@ public class ArticRunner {
             });
         }
 
-
         if (papersInXML != null && papersInXML.length > 0) {
 
             ArticRunner articRunner = getArticRunner(args);
@@ -59,7 +58,7 @@ public class ArticRunner {
 
                 LOGGER.debug(String.format("Starting generation process for %s", xml.getAbsolutePath()));
 
-                Paper paper = getPaper(xml, articRunner.pageParser, articRunner.paperHandler);
+                Paper paper = articRunner.getPaper(xml);
 
                 String fileName = xml.getName().split("\\.")[0];
 
@@ -86,7 +85,7 @@ public class ArticRunner {
         return injector.getInstance(ArticRunner.class);
     }
 
-    private static Paper getPaper(File xml, PageParser pageParser, PaperHandler paperHandler) throws ParserException, CRFClassifierException {
+    public Paper getPaper(File xml) throws ParserException, CRFClassifierException {
         List<Line> lines = pageParser.getPage(xml.getAbsolutePath()).getLines();
 
         List<CRFLine> crfLines = CRFClassifier.classifyFirstLevelCRF(lines);
