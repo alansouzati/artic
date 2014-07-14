@@ -13,7 +13,7 @@ artic.controller('PageNavigationCtrl',
             id: 'overview',
             title: 'Overview',
             icon: 'icon-home'
-        }, {
+        }/**, {
             index: 1,
             id: 'api',
             title: 'API',
@@ -28,7 +28,7 @@ artic.controller('PageNavigationCtrl',
             id: 'examples',
             title: 'Examples',
             icon: 'icon-tasks'
-        }];
+        }**/];
 
         $scope.switchPage = function(indx){
             $scope.selectedPage = $scope.pageTabs[indx];
