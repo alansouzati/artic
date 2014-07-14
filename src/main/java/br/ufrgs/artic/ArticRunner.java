@@ -5,12 +5,14 @@ import br.ufrgs.artic.crf.model.CRFLine;
 import br.ufrgs.artic.crf.model.CRFWord;
 import br.ufrgs.artic.crf.model.LineClass;
 import br.ufrgs.artic.di.ArticInjector;
+import br.ufrgs.artic.exceptions.ArticRunnerException;
 import br.ufrgs.artic.exceptions.CRFClassifierException;
 import br.ufrgs.artic.exceptions.ParserException;
 import br.ufrgs.artic.model.Line;
 import br.ufrgs.artic.output.PaperHandler;
 import br.ufrgs.artic.output.model.Paper;
 import br.ufrgs.artic.parser.PageParser;
+import br.ufrgs.artic.parser.omnipage.OmniPageParser;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -36,7 +38,24 @@ public class ArticRunner {
     @Inject
     private PaperHandler paperHandler;
 
-    public static void main(String[] args) throws ParserException, CRFClassifierException, IOException {
+    public ArticRunner() {
+
+        Injector injector = null;
+
+        if (pageParser == null || paperHandler == null){
+            injector = Guice.createInjector(new ArticInjector());
+        }
+
+        if (pageParser == null) {
+            pageParser = injector.getInstance(PageParser.class);
+        }
+
+        if (paperHandler == null) {
+            paperHandler = injector.getInstance(PaperHandler.class);
+        }
+    }
+
+    public static void main(String[] args) throws IOException, ArticRunnerException {
 
         String pathToXML = args.length > 0 && args[0] != null && !args[0].isEmpty() ? args[0] : System.getProperty("user.dir");
 
@@ -85,13 +104,21 @@ public class ArticRunner {
         return injector.getInstance(ArticRunner.class);
     }
 
-    public Paper getPaper(File xml) throws ParserException, CRFClassifierException {
-        List<Line> lines = pageParser.getPage(xml.getAbsolutePath()).getLines();
+    public Paper getPaper(File xml) throws ArticRunnerException {
+        try {
+            List<Line> lines = pageParser.getPage(xml.getAbsolutePath()).getLines();
+            List<CRFLine> crfLines = CRFClassifier.classifyFirstLevelCRF(lines);
 
-        List<CRFLine> crfLines = CRFClassifier.classifyFirstLevelCRF(lines);
+            Map<LineClass, List<CRFWord>> wordsMapByLineClass = CRFClassifier.classifySecondLevelCRF(crfLines);
 
-        Map<LineClass, List<CRFWord>> wordsMapByLineClass = CRFClassifier.classifySecondLevelCRF(crfLines);
+            return paperHandler.getPaper(wordsMapByLineClass);
+        } catch (ParserException | CRFClassifierException e) {
+            throw new ArticRunnerException(e);
+        }
 
-        return paperHandler.getPaper(wordsMapByLineClass);
+    }
+
+    public Paper getPaper(String xml) throws ArticRunnerException {
+        return getPaper(new File(xml));
     }
 }

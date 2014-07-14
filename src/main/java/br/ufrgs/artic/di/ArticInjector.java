@@ -25,6 +25,8 @@ public class ArticInjector extends AbstractModule {
     private File overrideProperties;
     private Properties properties = new Properties();
 
+    public ArticInjector () {}
+
     public ArticInjector(String overrideProperties) {
         if (overrideProperties != null && !overrideProperties.isEmpty()) {
             this.overrideProperties = new File(overrideProperties);
