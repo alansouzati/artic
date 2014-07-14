@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app="artic" >
+<html ng-cloak lang="en" ng-app="artic">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,7 +24,7 @@
                     <a class="navbar-brand" href="#/">Artic</a>
                 </div>
 
-                <div ng-cloak class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" ng-controller="PageNavigationCtrl">
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" ng-controller="PageNavigationCtrl">
                     <ul class="nav navbar-nav">
                         <li ng-repeat="page in pageTabs" ng-class="{active: selectedPage == page}">
                             <a href="" ng-click="switchPage(page.index)" ng-href="#/{{page.id}}"> <i ng-class="page.icon" class="icon-home"></i>{{page.title}}</a>
