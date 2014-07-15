@@ -1,3 +1,9 @@
 .navbar-inverse {
-    border-radius: 0px;
+    border-radius: 0;
+}
+
+.download-link {
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 180px;
 }
