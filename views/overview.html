@@ -1,51 +1,75 @@
-<div class="jumbotron center-block" style="width: 90%">
+<div class="row center-block" style="width: 90%">
+    <div class="jumbotron" >
 
-    <div class="row">
-        <div class="col-md-12">
-            <h1>ARTIC</h1>
-            <div style="margin-top: 20px;">
-                <h2>Metadata extractor from scientific documents</h2>
+        <div class="row">
+            <div class="col-md-12">
+                <h1>ARTIC</h1>
+                <div style="margin-top: 20px;">
+                    <h2>Metadata extractor from scientific documents</h2>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="row" style="margin-top: 20px;">
-       <div class="col-md-6">
-          <p>Dependencies:</p>
-           <ul style="font-size: 18px; font-weight: 200">
-               <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261.html">Java 7</a></li>
-               <li><a href="http://www.nuance.com/for-business/by-product/omnipage/standard/index.htm">OmniPage Professional 18</a></li>
-               <li><a href="https://code.google.com/p/crfpp/">CRF++</a></li>
-           </ul>
-       </div>
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-6">
+                <p>Dependencies:</p>
+                <ul style="font-size: 18px; font-weight: 200">
+                    <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261.html">Java 7</a></li>
+                    <li><a href="http://www.nuance.com/for-business/by-product/omnipage/standard/index.htm">OmniPage Professional 18</a></li>
+                    <li><a href="https://code.google.com/p/crfpp/">CRF++</a></li>
+                </ul>
+            </div>
 
-       <div class="col-md-6">
-           <p>License: <a href="http://opensource.org/licenses/mit-license.php">MIT</a></p>
-           <p>Author: <a href="https://github.com/alansouzati">Alan Souza</a></p>
-       </div>
-    </div>
-
-    <div class="row" style="margin-top: 20px;">
-        <div class="col-md-6" style="margin-top: 10px;">
-           <p>
-               Binary:
-           </p>
-           <a class="btn btn-primary btn-lg download-link" href="https://github.com/alansouzati/artic/releases/download/artic-1.0/artic-1.0.jar">
-               <i class="icon-white icon-download-alt"></i> Download JAR
-           </a>
+            <div class="col-md-6">
+                <p>License: <a href="http://opensource.org/licenses/mit-license.php">MIT</a></p>
+                <p>Author: <a href="https://github.com/alansouzati">Alan Souza</a></p>
+            </div>
         </div>
 
-        <div class="col-md-6" style="margin-top: 10px;">
-            <p>
-                Source code:
-            </p>
-            <a class="btn btn-primary btn-lg download-link" href="https://github.com/alansouzati/artic/archive/artic-1.0.zip">
-                <i class="icon-white icon-download-alt"></i> Download ZIP
-            </a>
-            <a class="btn btn-primary btn-lg download-link" href="https://github.com/alansouzati/artic/archive/artic-1.0.tar.gz">
-                <i class="icon-white icon-download-alt"></i> Download TAR
-            </a>
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-6" style="margin-top: 10px;">
+                <p>
+                    Binary:
+                </p>
+                <a class="btn btn-primary btn-lg download-link" href="https://github.com/alansouzati/artic/releases/download/artic-1.0/artic-1.0.jar">
+                    <i class="icon-white icon-download-alt"></i> Download JAR
+                </a>
+            </div>
+
+            <div class="col-md-6" style="margin-top: 10px;">
+                <p>
+                    Source code:
+                </p>
+                <a class="btn btn-primary btn-lg download-link" href="https://github.com/alansouzati/artic/archive/artic-1.0.zip">
+                    <i class="icon-white icon-download-alt"></i> Download ZIP
+                </a>
+                <a class="btn btn-primary btn-lg download-link" href="https://github.com/alansouzati/artic/archive/artic-1.0.tar.gz">
+                    <i class="icon-white icon-download-alt"></i> Download TAR
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
+<div class="row center-block" style="width: 90%">
+    <div class="col-md-4">
+        <h2><i class="icon-table"></i> API</h2>
+        <p>This section explains the API elements that compose ARTIC. If you are planning to extend this tool,
+            or to invoke the components from your existing code-base you should <a href="#/api" ng-click="switchPage(1)">check here</a>.
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2><i class="icon-unlock"></i> Configuration</h2>
+        <p>
+            This section explains the different config parameters that ARTIC provides in order to allow changes to be made in the generation process.
+            If you want to change the default implementation <a href="#/configuration" ng-click="switchPage(2)">check here</a>.
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2><i class="icon-tasks"></i> Examples</h2>
+        <p>
+            This section provides examples of the most common usage of ARTIC. If you want to see all different ways of
+            extract the metadata from you scientific paper <a href="#/examples" ng-click="switchPage(3)">check here</a>.
+        </p>
+    </div>
+</div>

@@ -9,7 +9,15 @@ artic.config(function ($routeProvider) {
             redirectTo: '/overview'
         }).
         when('/overview', {
-            controller: 'OverviewCtrl',
             templateUrl: 'views/overview.html'
+        }).
+        when('/api', {
+            templateUrl: 'views/api.html'
+        }).
+        when('/configuration', {
+            templateUrl: 'views/configuration.html'
+        }).
+        when('/examples', {
+            templateUrl: 'views/examples.html'
         });
 });
